@@ -28,6 +28,8 @@
     <delete dir="${bin}"/>
   </target>
 
+  <target name="clean run" depends="clean, run"/>
+
 </project>
   
   

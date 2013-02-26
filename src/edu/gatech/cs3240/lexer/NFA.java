@@ -1,7 +1,6 @@
 package edu.gatech.cs3240.lexer;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 public class NFA {
 	int start = 1;

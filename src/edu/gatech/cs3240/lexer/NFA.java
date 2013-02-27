@@ -2,50 +2,56 @@ package edu.gatech.cs3240.lexer;
 
 import java.util.ArrayList;
 
+
+/*
+ * Represents a NFA
+ * NFAs can be created from character classes
+ * NFAs can be modified using star, union, and concatenation
+ */
 public class NFA {
-	int start = 1;
-	ArrayList<Integer> accept;
-	ArrayList<State> states;
-	
-	NFA(){
-		states.add(new State(1));
+	int EMPTY = 127;
+	public State start;
+	public State accept;
+		
+	/*
+	 * Make a NFA for a character class
+	 */
+	public NFA(CharClass charClass){
+		accept = new State(true);
+		start = new State(charClass.chars, accept);
 	}
 	
-	private class State{
-		int name;
-		ArrayList<Transition> transitions;
-		State(int name){
-			this.name = name;
-			transitions = new ArrayList<Transition>();
-		}
-		
-		void addTransition(char in, int state){
-			Transition t = new Transition(in, state);
-		}
+	/*
+	 * Make a NFA for a single char
+	 * Use for literals in the regex
+	 */
+	public NFA(char a){
+		accept = new State(true);
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		list.add((int)a);
+		start = new State(list, accept);
+	}
+	
+	/*
+	 * Apply the star operator to the NFA
+	 */
+	public void star(){
+
+	}
+	
+	/*
+	 * Union this NFA with the given NFA
+	 */
+	public void union(NFA a){
+
+	}
+	
+	/*
+	 * Concatenate this NFA with the given NFA
+	 */
+	public void concat(NFA a){
 		
 	}
 	
-	private class Transition{
-		char input;
-		ArrayList<Integer> states;
-		Transition(char in){
-			input = in;
-			states = new ArrayList<Integer>();
-		}
-		
-		Transition(char in, int state){
-			input = in;
-			states = new ArrayList<Integer>();
-			addState(state);
-		}
-		
-		void addState(int state){
-			states.add(state);
-		}
-		
-		void remState(int state){
-			states.remove(state);
-		}
-	}
 }
 

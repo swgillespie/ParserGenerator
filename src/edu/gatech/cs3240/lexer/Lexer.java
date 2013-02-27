@@ -43,6 +43,7 @@ public abstract class Lexer {
 	/**
 	 * Lexes an input according to an implementation-defined grammar. Throws LexerExceptions
 	 * if syntax errors are encountered, and returns normally if no errors are found.
+	 * @throws LexerException 
 	 */
-	public abstract void parse();
+	public abstract void parse() throws LexerException;
 }

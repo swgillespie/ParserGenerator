@@ -40,7 +40,7 @@ public class State{
 	/*
 	 * Add a transition on the empty string to the given state
 	 */
-	public void addEmpty(State to){
+	public void onEmpty(State to){
 		transitions[EMPTY].add(to);
 	}
 	

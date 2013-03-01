@@ -1,6 +1,7 @@
 package edu.gatech.cs3240.lexer;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public abstract class Lexer {
@@ -43,7 +44,8 @@ public abstract class Lexer {
 	/**
 	 * Lexes an input according to an implementation-defined grammar. Throws LexerExceptions
 	 * if syntax errors are encountered, and returns normally if no errors are found.
-	 * @throws LexerException 
+	 * @throws LexerException Thrown if a syntax error is encountered
+	 * @return An array list of tokens
 	 */
-	public abstract void parse() throws LexerException;
+	public abstract ArrayList<String> parse() throws LexerException;
 }

@@ -3,11 +3,13 @@ package edu.gatech.cs3240.lexer;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Stack;
 
 public abstract class Lexer {
 	
-	private static char EOF = 0;
+	protected static char EOF = 0;
 	private Scanner scanner;
+	private Stack<Character> unget_stack;
 	
 	/**
 	 * Constructs a new Lexer that lexes an input stream according
@@ -23,9 +25,11 @@ public abstract class Lexer {
 		}
 		try {
 			scanner = new Scanner(new FileInputStream(inputFile));
+			scanner.useDelimiter("");
 		} catch (FileNotFoundException f) {
 			// this should never happen
 		}
+		unget_stack = new Stack<Character>();
 	}
 	
 	/**
@@ -35,10 +39,18 @@ public abstract class Lexer {
 	 * available to the stream 
 	 */
 	protected char next() {
-		if (scanner.hasNextByte()) {
-			return (char)scanner.nextByte();
+		if (unget_stack.isEmpty()) {
+			if (scanner.hasNext()) {
+				return scanner.next().charAt(0);
+			}
+			return EOF;
+		} else {
+			return unget_stack.pop();
 		}
-		return EOF;
+	}
+	
+	protected void unget(char s) {
+		unget_stack.push(s);
 	}
 	
 	/**

@@ -32,6 +32,7 @@ public class RegexLexer extends Lexer {
 	private char current_sym;
 	public Hashtable<String, CharClass> classTable = new Hashtable<String, CharClass>();
 	public Hashtable<String, NFA> tokenTable = new Hashtable<String, NFA>();
+	public ArrayList<String> tokenNames = new ArrayList<String>();
 	
 	//Character Sets
 	private Set<Character> re_escape_chars;
@@ -151,11 +152,38 @@ public class RegexLexer extends Lexer {
 	}
 	//BEGIN INPUT GRAMMAR DEFINITION
 	
+	/*
+	 * Parse through the entire file, building the final DFA
+	 */
 	public void parse() throws LexerException{
 		charClass();
 		tokenDef();
+		NFA combined = combineNFAs();
+		//DFA finalDFA = combined.toDFA();
 	}
 	
+	/*
+	 * Combine all the NFAs in the hash table into one large NFA
+	 */
+	public NFA combineNFAs() throws LexerException{
+		NFA combined = new NFA(' ');
+		if(tokenNames.isEmpty()){
+			throw new LexerException("No tokes defined");
+		}
+		else{
+			combined = tokenTable.get(tokenNames.get(0));
+			for(int i=1; i<tokenNames.size(); i++){
+				combined.concat(tokenTable.get(tokenNames.get(i)));
+			}
+		}
+		return combined;
+	}
+	
+	/*
+	 * Parse the character class section of the input file
+	 * Needs to be modified to tell when this section ends!!!
+	 * NEW_LINES no longer work!!!
+	 */
 	public void charClass() throws LexerException{
 		if(!accept(NEW_LINE)){
 			classLine();
@@ -163,6 +191,10 @@ public class RegexLexer extends Lexer {
 		};
 	}
 	
+	/*
+	 * Parse a single character class line
+	 * Stores the class name and the charClass in the classTable
+	 */
 	public void classLine() throws LexerException{
 		expect(DOLLAR, false);
 		String className = "";
@@ -174,6 +206,11 @@ public class RegexLexer extends Lexer {
 		classTable.put(className, charClass);
 	}
 	
+	/*
+	 * Parse the token definition section of the input file
+	 * Needs to be modified to tell when this section ends!!!
+	 * EOF no longer works!!!
+	 */
 	public void tokenDef()throws LexerException{
 		if(!accept(EOF)){
 			tokenLine();
@@ -181,6 +218,10 @@ public class RegexLexer extends Lexer {
 		}
 	}
 	
+	/*
+	 * Parse a single token defintion line
+	 * Stores the token name and the NFA in the tokenTable
+	 */
 	public void tokenLine() throws LexerException{
 		expect(DOLLAR, false);
 		String tokenName = "";
@@ -189,25 +230,41 @@ public class RegexLexer extends Lexer {
 			accept(current_sym);
 		}
 		NFA tokenNFA = toNFA(parseToken());
+		tokenNames.add(tokenName);
 		tokenTable.put(tokenName, tokenNFA);
 	}
 	
 	// BEGIN CHARCLASS GRAMMAR DEFINITION
+	/*
+	 * Create a list of tokens for the charClass
+	 */
 	public ArrayList<String> parseCharClass(){
 		return null;
 	}
 	
+	/*
+	 * Convert the list of tokens into a CharClass object
+	 */
 	public CharClass toCharClass(ArrayList<String> tokens){
 		return null;
 	}
+	
 	// BEGIN REGEX GRAMMAR DEFINITION
 	
+	/*
+	 * Convert the list of tokens into a NFA
+	 */
 	public NFA toNFA(ArrayList<String> tokens){
 		return null;
 	}
 
+	/*
+	 * Create a list of tokens for the regex
+	 */
 	public ArrayList<String> parseToken() throws LexerException {
 		logger.info("Entering parseToken, current_sym = " + current_sym);
+		
+		tokens = new ArrayList<String>();
 		try {
 			regex();
 		} catch (LexerException e) {

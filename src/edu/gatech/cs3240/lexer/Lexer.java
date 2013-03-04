@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public abstract class Lexer {
 	
-	private static char EOF = 0;
+	protected static char EOF = 0;
 	private Scanner scanner;
 	
 	/**

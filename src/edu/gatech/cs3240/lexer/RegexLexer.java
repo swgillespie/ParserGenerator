@@ -1,6 +1,7 @@
 package edu.gatech.cs3240.lexer;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Set;
 
 public class RegexLexer extends Lexer {
@@ -18,9 +19,15 @@ public class RegexLexer extends Lexer {
 	private static final char SPACE = ' ';
 	private static final char I = 'I';
 	private static final char N = 'N';
+	private static final char BACK_SLASH = '\\';
+	private static final char NEW_LINE = '\n';
+	private static final char DOLLAR ='$';
+
 	
 	
 	private char current_sym;
+	public Hashtable<String, CharClass> classTable = new Hashtable<String, CharClass>();
+	public Hashtable<String, NFA> tokenTable = new Hashtable<String, NFA>();
 	
 	public RegexLexer(String fileName) throws LexerException {
 		super(fileName);
@@ -40,15 +47,73 @@ public class RegexLexer extends Lexer {
 			return false;
 		}
 	}
-	
+
+
 	private void expect(char s) throws LexerException {
 		if (!accept(s)) {
 			throw new LexerException("Syntax error: expected " + s + ", got " + current_sym);
 		}
 	}
+	//BEGIN INPUT GRAMMAR DEFINITION
 	
-	// BEGIN GRAMMAR DEFINITION
+	public void parseFile() throws LexerException{
+		charClass();
+		tokenDef();
+	}
 	
+	public void charClass() throws LexerException{
+		if(!accept(NEW_LINE)){
+			classLine();
+			charClass();
+		};
+	}
+	
+	public void classLine() throws LexerException{
+		expect(DOLLAR);
+		String className = "";
+		while((current_sym>='A' & current_sym <='Z') | current_sym == '-'){
+			className += current_sym;
+			accept();
+		}
+		CharClass charClass = toCharClass(parseCharClass());
+		classTable.put(className, charClass);
+	}
+	
+	public void tokenDef()throws LexerException{
+		if(!accept(EOF)){
+			tokenLine();
+			tokenDef();
+		}
+	}
+	
+	public void tokenLine() throws LexerException{
+		expect(DOLLAR);
+		String tokenName = "";
+		while((current_sym>='A' & current_sym <='Z') | current_sym == '-'){
+			tokenName += current_sym;
+			accept();
+		}
+		NFA tokenNFA = toNFA(parseTokenDef());
+		tokenTable.put(tokenName, tokenNFA);
+	}
+	
+	// BEGIN CHARCLASS GRAMMAR DEFINITION
+	public ArrayList<String> parseCharClass(){
+		return null;
+	}
+	
+	public CharClass toCharClass(ArrayList<String> tokens){
+		return null;
+	}
+	// BEGIN REGEX GRAMMAR DEFINITION
+	
+	public ArrayList<String> parseTokenDef(){
+		return null;
+	}
+	
+	public NFA toNFA(ArrayList<String> tokens){
+		return null;
+	}
 	public void parse() throws LexerException {
 		regex();
 	}

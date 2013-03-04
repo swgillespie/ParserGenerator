@@ -159,7 +159,7 @@ public class RegexLexer extends Lexer {
 		charClass();
 		tokenDef();
 		NFA combined = combineNFAs();
-		//DFA finalDFA = combined.toDFA();
+		DFA finalDFA = new DFA(combined);
 	}
 	
 	/*

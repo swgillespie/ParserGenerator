@@ -33,6 +33,12 @@ public class NFA {
 	}
 	
 	/*
+	 * Make an empty NFA
+	 */
+	public NFA(){
+	}
+	
+	/*
 	 * Apply the star operator to the NFA
 	 */
 	public void star(){

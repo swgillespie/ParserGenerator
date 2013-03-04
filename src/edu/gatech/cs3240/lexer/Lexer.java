@@ -57,7 +57,6 @@ public abstract class Lexer {
 	 * Lexes an input according to an implementation-defined grammar. Throws LexerExceptions
 	 * if syntax errors are encountered, and returns normally if no errors are found.
 	 * @throws LexerException Thrown if a syntax error is encountered
-	 * @return An array list of tokens
 	 */
-	public abstract ArrayList<String> parse() throws LexerException;
+	public abstract void parse() throws LexerException;
 }

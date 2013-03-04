@@ -24,27 +24,27 @@ public class RegexLexer extends Lexer {
 	private static final char SPACE = ' ';
 	private static final char I = 'I';
 	private static final char N = 'N';
-
 	private static final char BACK_SLASH = '\\';
 	private static final char NEW_LINE = '\n';
 	private static final char DOLLAR ='$';
 
-	private static final char NEWLINE = 10;
-	
 	
 	private char current_sym;
 	public Hashtable<String, CharClass> classTable = new Hashtable<String, CharClass>();
 	public Hashtable<String, NFA> tokenTable = new Hashtable<String, NFA>();
 	
+	//Character Sets
 	private Set<Character> re_escape_chars;
 	private Set<Character> re_chars;
 	private Set<Character> cls_escape_chars;
 	private Set<Character> cls_chars;
 	private Set<Character> class_def_chars;
 	
+	//Tokens
 	private ArrayList<String> tokens;
 	private String tokenBuilder;
 	
+	//Logging
 	private static final Logger logger = Logger.getLogger(RegexLexer.class .getName());
 	
 	public RegexLexer(String fileName) throws LexerException {
@@ -55,16 +55,21 @@ public class RegexLexer extends Lexer {
 		tokenBuilder = "";
 	}
 	
-	
-	
+	/*
+	 * Initial Character Sets
+	 */
 	private void init() {
 		logger.info("Entering method, current_sym = " + current_sym);
+		
+		//Identifier Characters
 		ArrayList<Character> class_def_chars = new ArrayList<Character>();
-		for (char i = 65; i < 91; i++) {
+		for (char i = 'A'; i <= 'Z'; i++) {
 			class_def_chars.add(i);
 		}
 		class_def_chars.add('-');
 		this.class_def_chars = new HashSet<Character>(class_def_chars);
+		
+		//Regex Escaped Characters
 		ArrayList<Character> escape_chars = new ArrayList<Character>();
 		escape_chars.add(' ');
 		escape_chars.add('\\');
@@ -80,14 +85,17 @@ public class RegexLexer extends Lexer {
 		escape_chars.add('\'');
 		escape_chars.add('"');
 		this.re_escape_chars = new HashSet<Character>(escape_chars);
+		
+		//Regex Characters
 		ArrayList<Character> re_chars = new ArrayList<Character>();
-		for(char i = 32; i < 127; i++) {
+		for(char i = ' '; i <= '~'; i++) {
 			if (!this.re_escape_chars.contains(i)) {
 				re_chars.add(i);
 			}
 		}
 		this.re_chars = new HashSet<Character>(re_chars);
 		
+		//Class Escaped Characters
 		ArrayList<Character> cls_escape_chars = new ArrayList<Character>();
 		cls_escape_chars.add(' ');
 		cls_escape_chars.add('\\');
@@ -96,8 +104,10 @@ public class RegexLexer extends Lexer {
 		cls_escape_chars.add('[');
 		cls_escape_chars.add(']');
 		this.cls_escape_chars = new HashSet<Character>(cls_escape_chars);
+		
+		//Class Characters
 		ArrayList<Character> cls_chars = new ArrayList<Character>();
-		for(char i = 32; i < 127; i++) {
+		for(char i = ' '; i <= '~'; i++) {
 			if (!this.cls_escape_chars.contains(i)) {
 				cls_chars.add(i);
 			}
@@ -105,23 +115,30 @@ public class RegexLexer extends Lexer {
 		this.cls_chars = new HashSet<Character>(cls_chars);
 	}
 	
+	/*
+	 * Check if the given character matches. If it does, fetch the next non-white space character and return true.
+	 */
 	private boolean accept(char s) {
 		logger.info("Entering method, current_sym = " + current_sym + ", s = " + s);
 		if (current_sym == s) {
 			current_sym = next();
-			while (current_sym == SPACE || current_sym == NEWLINE) {
+			while (current_sym == SPACE || current_sym == NEW_LINE) {
 				current_sym = next();
 			}
 			
 			return true;
 		} else {
-			if (current_sym == EOF || current_sym == NEWLINE) {
+			if (current_sym == EOF || current_sym == NEW_LINE) {
 				throw new EndOfFileException("Reached end of file!");
 			}
 			return false;
 		}
 	}
 	
+	/*
+	 * Check if the given character matches. If it does, conditionally add it to the token list
+	 * Otherwise throw an exception
+	 */
 	private void expect(char s, boolean tokenAdd) throws LexerException {
 		logger.info("Entering method, current_sym = " + current_sym);
 		if (!accept(s)) {
@@ -134,7 +151,7 @@ public class RegexLexer extends Lexer {
 	}
 	//BEGIN INPUT GRAMMAR DEFINITION
 	
-	public void parseFile() throws LexerException{
+	public void parse() throws LexerException{
 		charClass();
 		tokenDef();
 	}
@@ -171,7 +188,7 @@ public class RegexLexer extends Lexer {
 			tokenName += current_sym;
 			accept(current_sym);
 		}
-		NFA tokenNFA = toNFA(parse());
+		NFA tokenNFA = toNFA(parseToken());
 		tokenTable.put(tokenName, tokenNFA);
 	}
 	
@@ -189,8 +206,8 @@ public class RegexLexer extends Lexer {
 		return null;
 	}
 
-	public ArrayList<String> parse() throws LexerException {
-		logger.info("Entering method, current_sym = " + current_sym);
+	public ArrayList<String> parseToken() throws LexerException {
+		logger.info("Entering parseToken, current_sym = " + current_sym);
 		try {
 			regex();
 		} catch (LexerException e) {
@@ -204,18 +221,18 @@ public class RegexLexer extends Lexer {
 	}
 	
 	private void regex() throws LexerException {
-		logger.info("Entering method, current_sym = " + current_sym);
+		logger.info("Entering regex, current_sym = " + current_sym);
 		rexp();
 	}
 	
 	private void rexp() throws LexerException {
-		logger.info("Entering method, current_sym = " + current_sym);
+		logger.info("Entering rexp, current_sym = " + current_sym);
 		rexp1();
 		rexp_();
 	}
 	
 	private void rexp_() throws LexerException {
-		logger.info("Entering method, current_sym = " + current_sym);
+		logger.info("Entering rexp_, current_sym = " + current_sym);
 		expect(UNION, true);
 		rexp1();
 		try {
@@ -226,13 +243,13 @@ public class RegexLexer extends Lexer {
 	}
 	
 	private void rexp1() throws LexerException {
-		logger.info("Entering method, current_sym = " + current_sym);
+		logger.info("Entering rexp1, current_sym = " + current_sym);
 		rexp2();
 		rexp1_();
 	}
 	
 	private void rexp1_() throws LexerException {
-		logger.info("Entering method, current_sym = " + current_sym);
+		logger.info("Entering rexp1_, current_sym = " + current_sym);
 		rexp2();
 		try {
 			rexp1_();
@@ -242,7 +259,7 @@ public class RegexLexer extends Lexer {
 	}
 	
 	private void rexp2() throws LexerException {
-		logger.info("Entering method, current_sym = " + current_sym);
+		logger.info("Entering rexp2, current_sym = " + current_sym);
 		try {
 			expect(L_PAREN, true);
 			rexp();
@@ -261,7 +278,7 @@ public class RegexLexer extends Lexer {
 	}
 	
 	private void rexp2_tail() throws LexerException {
-		logger.info("Entering method, current_sym = " + current_sym);
+		logger.info("Entering rexp2_tail, current_sym = " + current_sym);
 		try {
 			expect(STAR, true);
 			return;
@@ -276,7 +293,7 @@ public class RegexLexer extends Lexer {
 	}
 	
 	private void rexp3() throws LexerException {
-		logger.info("Entering method, current_sym = " + current_sym);
+		logger.info("Entering rexp3, current_sym = " + current_sym);
 		try {
 			char_class();
 			return;
@@ -286,7 +303,7 @@ public class RegexLexer extends Lexer {
 	}
 	
 	private void char_class() throws LexerException {
-		logger.info("Entering method, current_sym = " + current_sym);
+		logger.info("Entering char_class, current_sym = " + current_sym);
 		try {
 			expect(DOT, true);
 			return;
@@ -303,7 +320,7 @@ public class RegexLexer extends Lexer {
 	}
 	
 	private void char_class1() throws LexerException {
-		logger.info("Entering method, current_sym = " + current_sym);
+		logger.info("Entering char_class1, current_sym = " + current_sym);
 		try {
 			char_set_list();
 			return;
@@ -314,7 +331,7 @@ public class RegexLexer extends Lexer {
 	}
 	
 	private void char_set_list() throws LexerException {
-		logger.info("Entering method, current_sym = " + current_sym);
+		logger.info("Entering char_set_list, current_sym = " + current_sym);
 		try {
 			char_set();
 			char_set_list();
@@ -329,13 +346,13 @@ public class RegexLexer extends Lexer {
 	}
 	
 	private void char_set() throws LexerException {
-		logger.info("Entering method, current_sym = " + current_sym);
+		logger.info("Entering char_set, current_sym = " + current_sym);
 		CLS_CHAR();
 		char_set_tail();
 	}
 	
 	private void char_set_tail() throws LexerException {
-		logger.info("Entering method, current_sym = " + current_sym);
+		logger.info("Entering char_set_tail, current_sym = " + current_sym);
 		try {
 			expect(DASH, false);
 			tokenBuilder += '-';
@@ -347,7 +364,7 @@ public class RegexLexer extends Lexer {
 	}
 	
 	private void exclude_set() throws LexerException {
-		logger.info("Entering method, current_sym = " + current_sym);
+		logger.info("Entering exclude_set, current_sym = " + current_sym);
 		expect(CARAT, false);
 		char_set();
 		expect(R_BRACKET, true);
@@ -357,7 +374,7 @@ public class RegexLexer extends Lexer {
 	}
 	
 	private void exclude_set_tail() throws LexerException {
-		logger.info("Entering method, current_sym = " + current_sym);
+		logger.info("Entering exclude_set_tail, current_sym = " + current_sym);
 		try {
 			expect(L_BRACKET, true);
 			char_set();
@@ -368,7 +385,7 @@ public class RegexLexer extends Lexer {
 	}
 	
 	private void defined_class() throws LexerException {
-		logger.info("Entering method, current_sym = " + current_sym);
+		logger.info("Entering defined_class, current_sym = " + current_sym);
 		String class_name = "";
 		do {
 			class_name += current_sym;
@@ -382,7 +399,7 @@ public class RegexLexer extends Lexer {
 	}
 	
 	private void RE_CHAR() throws LexerException {
-		logger.info("Entering method, current_sym = " + current_sym);
+		logger.info("Entering RE_CHAR, current_sym = " + current_sym);
 		if (current_sym == '\\') {
 			current_sym = next();
 			if (!this.re_escape_chars.contains(current_sym)) {
@@ -403,7 +420,7 @@ public class RegexLexer extends Lexer {
 	}
 	
 	private void CLS_CHAR() throws LexerException {
-		logger.info("Entering method, current_sym = " + current_sym);
+		logger.info("Entering CLS_CHAR, current_sym = " + current_sym);
 		if (current_sym == '\\') {
 			current_sym = next();
 			if (!this.cls_escape_chars.contains(current_sym)) {

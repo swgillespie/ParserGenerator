@@ -27,9 +27,10 @@ public class RegexLexer extends Lexer {
 	private static final char BACK_SLASH = '\\';
 	private static final char NEW_LINE = '\n';
 	private static final char DOLLAR ='$';
+	private static final char PERCENT = '%';
 
 	
-	private char current_sym;
+	public char current_sym;
 	public Hashtable<String, CharClass> classTable = new Hashtable<String, CharClass>();
 	public Hashtable<String, NFA> tokenTable = new Hashtable<String, NFA>();
 	public ArrayList<String> tokenNames = new ArrayList<String>();
@@ -60,7 +61,7 @@ public class RegexLexer extends Lexer {
 	 * Initial Character Sets
 	 */
 	private void init() {
-		logger.info("Entering method, current_sym = " + current_sym);
+		logger.info("Entering init, current_sym = " + current_sym);
 		
 		//Identifier Characters
 		ArrayList<Character> class_def_chars = new ArrayList<Character>();
@@ -72,17 +73,17 @@ public class RegexLexer extends Lexer {
 		
 		//Regex Escaped Characters
 		ArrayList<Character> escape_chars = new ArrayList<Character>();
-		escape_chars.add(' ');
-		escape_chars.add('\\');
-		escape_chars.add('*');
-		escape_chars.add('+');
+		escape_chars.add(SPACE);
+		escape_chars.add(BACK_SLASH);
+		escape_chars.add(STAR);
+		escape_chars.add(PLUS);
 		escape_chars.add('?');
-		escape_chars.add('|');
-		escape_chars.add('[');
-		escape_chars.add(']');
-		escape_chars.add('(');
-		escape_chars.add(')');
-		escape_chars.add('.');
+		escape_chars.add(UNION);
+		escape_chars.add(L_BRACKET);
+		escape_chars.add(R_BRACKET);
+		escape_chars.add(L_PAREN);
+		escape_chars.add(R_PAREN);
+		escape_chars.add(DOT);
 		escape_chars.add('\'');
 		escape_chars.add('"');
 		this.re_escape_chars = new HashSet<Character>(escape_chars);
@@ -98,12 +99,12 @@ public class RegexLexer extends Lexer {
 		
 		//Class Escaped Characters
 		ArrayList<Character> cls_escape_chars = new ArrayList<Character>();
-		cls_escape_chars.add(' ');
-		cls_escape_chars.add('\\');
-		cls_escape_chars.add('^');
+		cls_escape_chars.add(SPACE);
+		cls_escape_chars.add(BACK_SLASH);
+		cls_escape_chars.add(CARAT);
 		cls_escape_chars.add('-');
-		cls_escape_chars.add('[');
-		cls_escape_chars.add(']');
+		cls_escape_chars.add(L_BRACKET);
+		cls_escape_chars.add(R_BRACKET);
 		this.cls_escape_chars = new HashSet<Character>(cls_escape_chars);
 		
 		//Class Characters
@@ -119,32 +120,39 @@ public class RegexLexer extends Lexer {
 	/*
 	 * Check if the given character matches. If it does, fetch the next non-white space character and return true.
 	 */
-	private boolean accept(char s) {
-		logger.info("Entering method, current_sym = " + current_sym + ", s = " + s);
+	public boolean accept(char s) {
+		logger.info("Entering accept, current_sym = " + current_sym + ", s = " + s);
 		if (current_sym == s) {
 			current_sym = next();
 			while (current_sym == SPACE || current_sym == NEW_LINE) {
 				current_sym = next();
 			}
-			
 			return true;
 		} else {
 			if (current_sym == EOF || current_sym == NEW_LINE) {
-				throw new EndOfFileException("Reached end of file!");
+				//throw new EndOfFileException("Reached end of file!");
 			}
 			return false;
 		}
 	}
 	
+	private boolean accept(){
+		logger.info("Entering accept, current_sym = " + current_sym);
+		current_sym = next();
+		while (current_sym == SPACE || current_sym == NEW_LINE) {
+			current_sym = next();
+		}
+		return true;
+	}
 	/*
 	 * Check if the given character matches. If it does, conditionally add it to the token list
 	 * Otherwise throw an exception
 	 */
-	private void expect(char s, boolean tokenAdd) throws LexerException {
-		logger.info("Entering method, current_sym = " + current_sym);
+	public void expect(char s, boolean tokenAdd) throws LexerException {
+		logger.info("Entering expect, current_sym = " + current_sym);
 		if (!accept(s)) {
-			logger.info("Throwing LexerException: expected: " + s + ", got: " + current_sym);
-			throw new LexerException("Syntax error: expected " + s + ", got " + current_sym);
+			logger.info("Throwing LexerException: expected: " + s + ", got: " + current_sym + '.');
+			throw new LexerException("Syntax error: expected " + s + ", got " + current_sym + '.');
 		}
 		if (tokenAdd) {
 			tokens.add("" + s);
@@ -181,14 +189,17 @@ public class RegexLexer extends Lexer {
 	
 	/*
 	 * Parse the character class section of the input file
-	 * Needs to be modified to tell when this section ends!!!
-	 * NEW_LINES no longer work!!!
+	 * Section ends when '%%' is found
 	 */
 	public void charClass() throws LexerException{
-		if(!accept(NEW_LINE)){
+		logger.info("Entering charClass, current_sym = " + current_sym);
+		if(!accept(PERCENT)){
 			classLine();
 			charClass();
-		};
+		}
+		else{
+			expect(PERCENT, false);
+		}
 	}
 	
 	/*
@@ -238,8 +249,10 @@ public class RegexLexer extends Lexer {
 	/*
 	 * Create a list of tokens for the charClass
 	 */
-	public ArrayList<String> parseCharClass(){
-		return null;
+	public ArrayList<String> parseCharClass() throws LexerException{
+		tokens = new ArrayList<String>();
+		char_class();
+		return tokens;
 	}
 	
 	/*
@@ -444,14 +457,21 @@ public class RegexLexer extends Lexer {
 	private void defined_class() throws LexerException {
 		logger.info("Entering defined_class, current_sym = " + current_sym);
 		String class_name = "";
-		do {
+		//defined class names start with a $
+		expect(DOLLAR, true);
+		//keep adding characters until one is invalid
+		while(this.class_def_chars.contains(current_sym)){
 			class_name += current_sym;
-			if (!this.class_def_chars.contains(current_sym)) {
-				logger.info("Throwing invalid class identifier: " + class_name);
-				throw new CriticalLexerException("Invalid class identifier character: got " + current_sym);
-			}
 			current_sym = next();
-		} while (current_sym != ' ');
+		}
+		//In order to make sure newlines and spaces are removed put the current symbol back onto the stack
+		//And re-accept
+		unget(current_sym);
+		accept();
+		if(class_name.length()<1){
+			logger.info("Throwing invalid class identifier: empty string");
+			throw new CriticalLexerException("Invalid class identifier character: empty string");
+		}
 		tokens.add(class_name);
 	}
 	

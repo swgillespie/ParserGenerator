@@ -97,6 +97,8 @@ public class RegexLexer2 extends Lexer{
 		
 		classSection();
 		tokenSection();
+		NFA finalNFA = combineNFAs();
+		DFA finalDFA = new DFA(finalNFA);
 	}
 	
 	public void classSection() throws LexerException{
@@ -173,7 +175,6 @@ public class RegexLexer2 extends Lexer{
 		CharClass charClass = new CharClass();
 		if(accept('.', NO_SPACES)){
 			charClass.addRange(CHAR_LOW, CHAR_HI);
-			System.out.println("Added All");
 		}
 		else if(accept('[',SPACES)){
 			if(accept('^',SPACES)){
@@ -401,5 +402,19 @@ public class RegexLexer2 extends Lexer{
 			nextSym(NO_SPACES);
 		}
 		return next;		
+	}
+	
+	public NFA combineNFAs() throws LexerException{
+		NFA combined = null;
+		if(tokenNames.isEmpty()){
+			throw new LexerException("No tokes defined");
+		}
+		else{
+			combined = tokenTable.get(tokenNames.get(0));
+			for(int i=1; i<tokenNames.size(); i++){
+				combined.concat(tokenTable.get(tokenNames.get(i)));
+			}
+		}
+		return combined;
 	}
 }

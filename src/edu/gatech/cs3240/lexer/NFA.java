@@ -9,7 +9,6 @@ import java.util.ArrayList;
  * NFAs can be modified using star, union, and concatenation
  */
 public class NFA {
-	int EMPTY = 127;
 	public State start;
 	public State accept;
 		
@@ -42,6 +41,8 @@ public class NFA {
 	 * Apply the star operator to the NFA
 	 */
 	public void star(){
+		//Link accept to start
+		accept.onEmpty(start);
 		//Create a new start state
 		State oldStart = start;
 		start = new State(false);
@@ -82,5 +83,12 @@ public class NFA {
 		accept = a.accept;
 	}
 	
+	/*
+	 * Apply the operation to this NFA
+	 */
+	public void plus(){
+		//Link accept to start
+		accept.onEmpty(start);
+	}
 }
 

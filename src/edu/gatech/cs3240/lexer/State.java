@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class State{
 	
-	private final int EMPTY = 96;
+	private final int EMPTY = 95;
 	private boolean accept = false;
 	
 	/*
@@ -31,7 +31,9 @@ public class State{
 	 * Makes a state with transitions to the given state on the given chars
 	 */
 	public State(ArrayList<Integer> chars, State state){
-		super();
+		for(int i = 0; i < transitions.length; i++ ){
+			transitions[i] = new ArrayList<State>();
+		}
 		for(int i :chars){
 			transitions[i-32].add(state);
 		}

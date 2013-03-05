@@ -53,4 +53,21 @@ public class State{
 		this.accept = accept;
 	}
 
+	/*
+	 * Generate a list of all states reachable from this state on an empty transition
+	 * Need to fix infinite loop problem
+	 */
+	public ArrayList<State> statesOnEmpty(){
+		ArrayList<State> states = new ArrayList<State>();
+		states.add(this);
+		for(State s :transitions[EMPTY]){
+			ArrayList<State> subList = s.statesOnEmpty();
+			for(State sub: subList){
+				if(!states.contains(sub)){
+					states.add(sub);
+				}
+			}
+		}
+		return states;
+	}
 }

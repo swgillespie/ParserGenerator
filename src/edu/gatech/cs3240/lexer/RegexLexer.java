@@ -165,9 +165,9 @@ public class RegexLexer extends Lexer {
 	 */
 	public void parse() throws LexerException{
 		charClass();
-		tokenDef();
-		NFA combined = combineNFAs();
-		DFA finalDFA = new DFA(combined);
+		//tokenDef();
+		//NFA combined = combineNFAs();
+		//DFA finalDFA = new DFA(combined);
 	}
 	
 	/*
@@ -207,14 +207,22 @@ public class RegexLexer extends Lexer {
 	 * Stores the class name and the charClass in the classTable
 	 */
 	public void classLine() throws LexerException{
+		//All class names start with $
 		expect(DOLLAR, false);
 		String className = "";
 		while((current_sym>='A' & current_sym <='Z') | current_sym == '-'){
 			className += current_sym;
-			accept(current_sym);
+			current_sym = next();
 		}
-		CharClass charClass = toCharClass(parseCharClass());
-		classTable.put(className, charClass);
+		//Put the current_sym back on the stack and then accept to skip whitespace
+		unget(current_sym);
+		accept();
+		ArrayList<String> list = parseCharClass();
+		for(String s : list){
+			System.out.println(s);
+		}
+		//CharClass charClass = toCharClass(parseCharClass());
+		//classTable.put(className, charClass);
 	}
 	
 	/*

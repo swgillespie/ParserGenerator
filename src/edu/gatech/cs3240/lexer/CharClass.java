@@ -26,7 +26,9 @@ public class CharClass {
 	
 	//Add a single character
 	public void addChar(char a){
-		chars.add((int)a);
+		if(!chars.contains((int)a)){
+			chars.add((int)a);
+		}
 	}
 	
 	//Add a range of characters and return true
@@ -37,10 +39,20 @@ public class CharClass {
 		}
 		else{
 			for(int i = a; i<=b; i++){
-				chars.add(i);
+				
+				if(!chars.contains(i)){
+					chars.add(i);
+				}
 			}
 			return true;
 		}
 	}
 		
+	public void print(){
+		System.out.print("[");
+		for(Integer i : chars){
+			System.out.print(i + ", ");
+		}
+		System.out.println("]");
+	}
 }

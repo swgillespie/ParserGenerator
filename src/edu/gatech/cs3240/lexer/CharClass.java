@@ -51,7 +51,7 @@ public class CharClass {
 	public void print(){
 		System.out.print("[");
 		for(Integer i : chars){
-			System.out.print(i + ", ");
+			System.out.print((char)(int)i + ", ");
 		}
 		System.out.println("]");
 	}

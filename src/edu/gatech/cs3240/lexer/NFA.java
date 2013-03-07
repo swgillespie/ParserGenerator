@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class NFA {
 	public State start;
 	public State accept;
+	public ArrayList<Integer> alphabet = new ArrayList<Integer>(); //need NFA alphabet for DFA conversion
 		
 	/*
 	 * Make a NFA for a character class
@@ -18,6 +19,9 @@ public class NFA {
 	public NFA(CharClass charClass){
 		accept = new State(true);
 		start = new State(charClass.chars, accept);
+		for(Integer character : charClass.chars){ //create an alphabet to reference in DFA conversion
+			alphabet.add(character);
+		}
 	}
 	
 	/*
@@ -29,6 +33,7 @@ public class NFA {
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		list.add((int)a);
 		start = new State(list, accept);
+		alphabet.add((int)a);
 	}
 	
 	/*

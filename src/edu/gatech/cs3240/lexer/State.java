@@ -46,6 +46,10 @@ public class State{
 		transitions[EMPTY].add(to);
 	}
 	
+	public ArrayList<State>[] getTrans(){
+		return transitions; 
+	}
+	
 	/*
 	 * Change the accept value
 	 */

@@ -1,0 +1,7 @@
+$TESTING [0-9a-zA-Z]
+$LOW .
+$TESTS [1-64-9]
+$TEST [^b] IN $LOW
+%%
+$NUMBER ($LOW)*\.($TEST)*
+$OTHER   text|[a-c]|($LOW$LOW)+($TEST)*

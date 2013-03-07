@@ -2,11 +2,10 @@ package edu.gatech.cs3240.lexer;
 
 import java.util.*;
 
+//note: need to check if resulting state from transition is an existing state and if so loop back on that char
+
 /*
  * Creates a DFA from an existing NFA
- * 
- * 
- * sidenote: apparently nothing i had tried to commit the last two days actually commited bc i was using the read only URI, oops
  */
 
 public class DFA extends NFA{
@@ -55,7 +54,7 @@ public class DFA extends NFA{
 			stack.push(s); // add states to stack
 			emptyTrans.add(s);
 		}
-		while(!stack.isEmpty()){ //if the stack isn't empty
+		while(!stack.isEmpty()){
 			State s = stack.pop();
 			for(State st : s.getTrans()[95]){
 				stack.push(st);
@@ -88,19 +87,24 @@ public class DFA extends NFA{
 		//c = ascii value of char
 		transSet = new ArrayList<State>();
 		for(State s : set){
-			ArrayList<State> subSet = move(s, c-32);
-			for(State state : subSet){
-				transSet.add(state);
+			if(!s.getTrans()[c-32].isEmpty()){
+				for(State state : s.getTrans()[c-32]){
+					transSet.add(state);
+				}
 			}
+			//ArrayList<State> subSet = move(s, c-32);
+			/*for(State state : subSet){
+				transSet.add(state);
+			}*/
 		}
 		return transSet;
 	}
 	
-	public ArrayList<State> move(State state, Integer i){
+	/*public ArrayList<State> move(State state, Integer i){
 		//i = c-32
 		Stack<State> stack = new Stack<State>();
 		moveSet = new ArrayList<State>();
-		moveSet.add(state);
+		//moveSet.add(state);  only add next states reachable on i to moveSet, not state -- different from e transitions
 		for(State s : state.getTrans()[i]){
 			stack.push(s); // add states to stack
 			moveSet.add(s);
@@ -113,7 +117,7 @@ public class DFA extends NFA{
 			}
 		}
 		return moveSet;
-	}
+	}*/
 	
 	
 	

@@ -99,6 +99,7 @@ public class RegexLexer2 extends Lexer{
 		tokenSection();
 		NFA finalNFA = combineNFAs();
 		DFA finalDFA = new DFA(finalNFA);
+		
 	}
 	
 	public void classSection() throws LexerException{

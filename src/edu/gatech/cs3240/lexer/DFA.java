@@ -1,6 +1,7 @@
 package edu.gatech.cs3240.lexer;
 
 
+import java.io.*;
 import java.util.*;
 
 
@@ -8,7 +9,10 @@ import java.util.*;
  * Creates a DFA from an existing NFA
  */
 
-public class DFA extends NFA{
+public class DFA extends NFA implements Serializable {
+	
+
+	private static final long serialVersionUID = 1L; // used for serialization
 	
 	public State startState;
 	public ArrayList<Integer> alphabet;
@@ -27,6 +31,8 @@ public class DFA extends NFA{
 	
 	public ArrayList<State> dfa; //DFA represented as array list of array list where nested array list holds states
 	
+	
+	
 	public DFA(NFA from){
 		dfa = new ArrayList<State>();
 		pairs1 = new Hashtable<State,ArrayList<State>>();
@@ -34,6 +40,58 @@ public class DFA extends NFA{
 		accept = false;
 		create(from);
 		System.out.println("*****************dfa: "+dfa);
+	}
+	
+	// BEGIN DFA SERIALIZATION CODE
+	
+	/**
+	 * readDFAFromFile reads a DFA from a file and returns the constructed
+	 * DFA object.
+	 * @param filename The filename of the serialized DFA
+	 * @return The reconstructed DFA object
+	 */
+	public static DFA readDFAFromFile(String filename) throws FileNotFoundException {
+		FileInputStream fis;
+		ObjectInputStream ois;
+		try {
+			fis = new FileInputStream(filename); // open filestream
+			ois = new ObjectInputStream(fis);    // make filestream able to read objects
+			DFA dfa_in = (DFA)ois.readObject();  // read an object from the file
+			ois.close();                         // close the filestream
+			return dfa_in;
+		} catch (FileNotFoundException e) {
+			throw e; // thrown when the filename doesn't exist
+		} catch (IOException i) {
+			// this is very bad and shouldn't happen
+			i.printStackTrace();
+		} catch (ClassNotFoundException c) {
+			// this also should never happen
+			c.printStackTrace();
+		}
+		return null; // should be unreachable, if this method ever returns null it means that
+		// 1) either the object input stream got corrupted somehow or
+		// 2) the DFA class doesn't know how to deserialize itself, which is unlikely since
+		// this method is being defined inside of the DFA class.
+		// either way neither of those things should ever happen, and if dfa ever equals
+		// null then bad things are happening.
+	}
+	
+	/**
+	 * writeToFile serializes this DFA object to a file named filename.
+	 * @param filename The name of the file to create
+	 */
+	public void writeToFile(String filename) {
+		FileOutputStream fos;
+		ObjectOutputStream oos;
+		try {
+			fos = new FileOutputStream(filename); // open filestream
+			oos = new ObjectOutputStream(fos);    // make filestream able to write objects
+			oos.writeObject(this);                // write this object to file
+			oos.close();                          // close the filestream
+		} catch (IOException i) {
+			// this is very bad and shouldn't happen
+			i.printStackTrace();
+		}
 	}
 	
 	

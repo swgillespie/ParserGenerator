@@ -164,7 +164,7 @@ public class DFA extends NFA implements Serializable {
 				}
 			}	
 		}//end while
-		dfa.add(deadState); // dead state will be the last state in the DFA
+		dfa.add(deadState); // dead state will be the last 
 	}//end create
 
 	

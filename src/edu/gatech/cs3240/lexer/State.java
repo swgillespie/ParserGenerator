@@ -10,7 +10,7 @@ public class State{
 	private final int EMPTY = 95;
 	private boolean accept = false;
 	public String type; 
-	public boolean marked = false;
+	public boolean marked = false; 
 	public boolean dead = false;
 	
 	/*

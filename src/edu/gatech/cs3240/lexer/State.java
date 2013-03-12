@@ -92,7 +92,10 @@ public class State{
 	public void setDead(boolean d){
 		dead = d;
 	}
-
+	
+	public void setType(String s){
+		type = s;
+	}
 	/*
 	 * Generate a list of all states reachable from this state on an empty transition
 	 * Need to fix infinite loop problem
@@ -109,5 +112,9 @@ public class State{
 			}
 		}
 		return states;
+	}
+	
+	public State match(char c){
+		return transitions[c-32].get(0);
 	}
 }

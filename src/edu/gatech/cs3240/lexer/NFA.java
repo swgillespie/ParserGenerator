@@ -45,7 +45,7 @@ public class NFA {
 		this.type = type;
 	}
 	public NFA(){
-		type = "";
+		type = null;
 	}
 	/*
 	 * Apply the star operator to the NFA

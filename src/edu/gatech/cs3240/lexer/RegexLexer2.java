@@ -24,6 +24,7 @@ public class RegexLexer2 extends Lexer{
 	private ArrayList<String> tokenNames = new ArrayList<String>();
 	public Hashtable<String, NFA> tokenTable = new Hashtable<String, NFA>();
 	private int inParen = 0;
+	public DFA output;
 	
 	public RegexLexer2(String filename) throws LexerException{
 		super(filename);
@@ -99,7 +100,7 @@ public class RegexLexer2 extends Lexer{
 		classSection();
 		tokenSection();
 		NFA finalNFA = combineNFAs();
-		DFA finalDFA = new DFA(finalNFA);
+		output = new DFA(finalNFA);
 		
 	}
 	

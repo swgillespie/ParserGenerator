@@ -40,7 +40,7 @@ public class DFA extends NFA implements Serializable {
 		pairs2 = new Hashtable<ArrayList<State>, State>();
 		accept = false;
 		create(from);
-		System.out.println("*****************dfa: "+dfa);
+		//System.out.println("*****************dfa: "+dfa);
 	}
 	
 	// BEGIN DFA SERIALIZATION CODE

@@ -11,6 +11,7 @@ public class State{
 	private boolean accept = false;
 	public String type; 
 	public boolean marked = false;
+	public boolean dead = false;
 	
 	/*
 	 * Array of array lists that store states
@@ -86,6 +87,10 @@ public class State{
 	
 	public boolean getAccept(){
 		return accept;
+	}
+	
+	public void setDead(boolean d){
+		dead = d;
 	}
 
 	/*

@@ -105,8 +105,14 @@ public class DFA extends NFA implements Serializable {
 			}
 		}
 		State dfaStart = new State(accept);
+		State deadState = new State(false);
+		deadState.setDead(true);
+		ArrayList<State> deadSet = new ArrayList<State>(); // this is an empty set
 		pairs1.put(dfaStart, startStateSet);
 		pairs2.put(startStateSet, dfaStart);
+		
+		pairs1.put(deadState, deadSet);
+		pairs2.put(deadSet, deadState);
 		dfa.add(dfaStart);
 		
 		for(State s : dfa){ //check if there are any unmarked states
@@ -126,7 +132,6 @@ public class DFA extends NFA implements Serializable {
 				tSet = transition(currStateSet,c);
 				if(tSet.isEmpty()){ //
 					sSet = tSet; //considering null states
-					dead = true; // this will be a null state
 				}
 				else{
 					sSet = epClosure(tSet);
@@ -135,13 +140,10 @@ public class DFA extends NFA implements Serializable {
 				if(!pairs1.containsValue(sSet)){
 					for(State s : sSet){
 						if(s.getAccept()){
-							accept = true;
+							accept = true; 
 						}
 					}
 					newState = new State(accept);
-					if(dead){
-						newState.setDead(dead); // marks the state as dead if there are no transitions on character c in NFA
-					}
 					dfa.add(newState);
 					pairs1.put(newState, sSet);
 					pairs2.put(sSet, newState);
@@ -162,6 +164,7 @@ public class DFA extends NFA implements Serializable {
 				}
 			}	
 		}//end while
+		dfa.add(deadState); // dead state will be the last state in the DFA
 	}//end create
 
 	

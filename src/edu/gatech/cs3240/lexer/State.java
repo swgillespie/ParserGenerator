@@ -49,6 +49,10 @@ public class State{
 		transitions[EMPTY].add(to);
 	}
 	
+	public void setType(String t){
+		type = t;
+	}
+	
 	public ArrayList<State>[] getTrans(){
 		return transitions; 
 	}

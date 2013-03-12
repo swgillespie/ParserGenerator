@@ -23,6 +23,7 @@ public class DFA extends NFA{
 	private Hashtable<ArrayList<State>, State> pairs2;
 	private boolean accept;
 	private State currState;
+	private boolean dead = false;
 	
 	
 	public ArrayList<State> dfa; //DFA represented as array list of array list where nested array list holds states
@@ -65,8 +66,9 @@ public class DFA extends NFA{
 			
 			for(int c=0;c<96;c++){
 				tSet = transition(currStateSet,c);
-				if(tSet.isEmpty()){
+				if(tSet.isEmpty()){ //
 					sSet = tSet; //considering null states
+					dead = true; // this will be a null state
 				}
 				else{
 					sSet = epClosure(tSet);
@@ -79,6 +81,9 @@ public class DFA extends NFA{
 						}
 					}
 					newState = new State(accept);
+					if(dead){
+						newState.setDead(dead); // marks the state as dead if there are no transitions on character c in NFA
+					}
 					dfa.add(newState);
 					pairs1.put(newState, sSet);
 					pairs2.put(sSet, newState);

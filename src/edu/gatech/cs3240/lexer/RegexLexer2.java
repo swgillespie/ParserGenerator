@@ -18,6 +18,7 @@ public class RegexLexer2 extends Lexer{
 	
 	
 	private char current_sym;
+	private String current_type;
 	private ArrayList<String> classNames = new ArrayList<String>();
 	public Hashtable<String, CharClass> classTable = new Hashtable<String, CharClass>();
 	private ArrayList<String> tokenNames = new ArrayList<String>();
@@ -156,12 +157,7 @@ public class RegexLexer2 extends Lexer{
 				throw new LexerException("Token name is empty");
 			}
 			tokenNames.add(tokenName);
-			/*String tokenRegex = "";
-			while(TOKEN_ESC_CHARS.contains(current_sym) ||TOKEN_CHARS.contains(current_sym)){
-				tokenRegex += current_sym;
-				nextSym(SPACES);
-			}
-			System.out.println(tokenRegex);*/
+			current_type = tokenName;
 			NFA tokenNFA = tokenRegex();
 			tokenTable.put(tokenName, tokenNFA);
 			accept(RETURN, NO_SPACES);
@@ -335,7 +331,7 @@ public class RegexLexer2 extends Lexer{
 				nextSym(NO_SPACES);
 			}
 			if(classNames.contains(className)){
-				tokenNFA = new NFA(classTable.get(className));
+				tokenNFA = new NFA(classTable.get(className), current_type);
 			}
 			else{
 				throw new LexerException("Invalid character class: " + className);
@@ -343,7 +339,7 @@ public class RegexLexer2 extends Lexer{
 		}
 		else if(accept('.', NO_SPACES)){
 			charClass.addRange(CHAR_LOW, CHAR_HI);
-			tokenNFA = new NFA(charClass);
+			tokenNFA = new NFA(charClass, current_type);
 		}
 		else if(accept('[',SPACES)){
 			if(accept('^',SPACES)){
@@ -352,12 +348,12 @@ public class RegexLexer2 extends Lexer{
 			else{
 				classSet(charClass);
 			}
-			tokenNFA = new NFA(charClass);	
+			tokenNFA = new NFA(charClass, current_type);	
 		}
 		else{
 			char next = getTokenChar();
 			if(next>0){
-				tokenNFA = new NFA(next);
+				tokenNFA = new NFA(next, current_type);
 				tokenNFA = tokenRegexOp(tokenNFA);	
 			}
 		}
@@ -413,7 +409,7 @@ public class RegexLexer2 extends Lexer{
 		else{
 			combined = tokenTable.get(tokenNames.get(0));
 			for(int i=1; i<tokenNames.size(); i++){
-				combined.concat(tokenTable.get(tokenNames.get(i)));
+				combined.combine(tokenTable.get(tokenNames.get(i)));
 			}
 		}
 		return combined;

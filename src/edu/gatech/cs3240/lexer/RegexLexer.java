@@ -174,7 +174,7 @@ public class RegexLexer extends Lexer {
 	 * Combine all the NFAs in the hash table into one large NFA
 	 */
 	public NFA combineNFAs() throws LexerException{
-		NFA combined = new NFA(' ');
+		NFA combined = new NFA(' ', "");
 		if(tokenNames.isEmpty()){
 			throw new LexerException("No tokes defined");
 		}

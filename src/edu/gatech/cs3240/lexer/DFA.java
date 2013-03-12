@@ -27,7 +27,7 @@ public class DFA extends NFA implements Serializable {
 	private Hashtable<ArrayList<State>, State> pairs2;
 	private boolean accept;
 	private State currState;
-	private boolean dead = false;
+	public State deadState;
 	
 	
 	public ArrayList<State> dfa; //DFA represented as array list of array list where nested array list holds states
@@ -165,6 +165,7 @@ public class DFA extends NFA implements Serializable {
 			}	
 		}//end while
 		dfa.add(deadState); // dead state will be the last 
+		this.deadState = deadState;
 	}//end create
 
 	
@@ -230,5 +231,8 @@ public class DFA extends NFA implements Serializable {
 		return transSet;
 	}
 	
+	public ArrayList<State> getStateSet(State s){
+		return pairs1.get(s);
+	}
 	
 }

@@ -11,32 +11,42 @@ import java.util.ArrayList;
 public class NFA {
 	public State start;
 	public State accept;
+	public String type;
 		
 	/*
 	 * Make a NFA for a character class
 	 */
-	public NFA(CharClass charClass){
+	public NFA(CharClass charClass, String type){
+		this.type = type;
 		accept = new State(true);
+		accept.setType(type);
 		start = new State(charClass.chars, accept);
+		start.setType(type);
 	}
 	
 	/*
 	 * Make a NFA for a single char
 	 * Use for literals in the regex
 	 */
-	public NFA(char a){
+	public NFA(char a, String type){
+		this.type = type;
 		accept = new State(true);
+		accept.setType(type);
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		list.add((int)a);
 		start = new State(list, accept);
+		start.setType(type);
 	}
 	
 	/*
 	 * Make an empty NFA
 	 */
-	public NFA(){
+	public NFA(String type){
+		this.type = type;
 	}
-	
+	public NFA(){
+		type = null;
+	}
 	/*
 	 * Apply the star operator to the NFA
 	 */
@@ -46,11 +56,13 @@ public class NFA {
 		//Create a new start state
 		State oldStart = start;
 		start = new State(false);
+		start.setType(type);
 		start.onEmpty(oldStart);
 		//Create a new accept state
 		State oldAccept = accept;
 		oldAccept.setAccept(false);
 		accept = new State(true);
+		accept.setType(type);
 		oldAccept.onEmpty(accept);
 		//Link start and accept for the case of zero repetitions
 		start.onEmpty(accept);
@@ -63,12 +75,14 @@ public class NFA {
 		//Create a new start state
 		State oldStart = start;
 		start = new State(false);
+		start.setType(type);
 		start.onEmpty(oldStart);
 		start.onEmpty(a.start);
 		//Create a new accept state
 		State oldAccept = accept;
 		oldAccept.setAccept(false);
 		accept = new State(true);
+		accept.setType(type);
 		oldAccept.onEmpty(accept);
 		a.accept.setAccept(false);
 		a.accept.onEmpty(accept);
@@ -83,12 +97,24 @@ public class NFA {
 		accept = a.accept;
 	}
 	
+	
 	/*
 	 * Apply the operation to this NFA
 	 */
 	public void plus(){
 		//Link accept to start
 		accept.onEmpty(start);
+	}
+	
+	public void combine(NFA a){
+		//Create a new start state
+				type = "";
+				State oldStart = start;
+				start = new State(false);
+				start.setType(type);
+				start.onEmpty(oldStart);
+				start.onEmpty(a.start);
+				
 	}
 }
 

@@ -1,6 +1,6 @@
 package edu.gatech.cs3240.lexer;
 
-import java.util.ArrayList;
+import java.util.*;
 /*
  * Represents a single state in a NFA
  * Specifies if it is an accept state
@@ -9,6 +9,9 @@ public class State{
 	
 	private final int EMPTY = 95;
 	private boolean accept = false;
+	public String type; 
+	public boolean marked = false; 
+	public boolean dead = false;
 	
 	/*
 	 * Array of array lists that store states
@@ -46,9 +49,38 @@ public class State{
 		transitions[EMPTY].add(to);
 	}
 	
+	public void setType(String t){
+		type = t;
+	}
+	
 	public ArrayList<State>[] getTrans(){
 		return transitions; 
 	}
+	
+	public void setMarked(boolean b){
+		marked = b;
+	}
+	
+	/*
+	 * adds new transitions to a state after state is created
+	 */
+	public void setTrans(Integer charInt, State state){
+		if(!transitions[charInt].isEmpty()){
+			transitions[charInt].add(state);
+		}
+		else{
+			transitions[charInt] = new ArrayList<State>();
+			transitions[charInt].add(state);
+		}
+	}
+	
+	public LinkedList<State> getEpState(){
+        LinkedList<State> emState = new LinkedList<State>();
+        for(int i =0; i<transitions[95].size(); i++){
+            emState.addLast(emState.get(i));
+        }
+        return emState;
+    }
 	
 	/*
 	 * Change the accept value
@@ -56,7 +88,18 @@ public class State{
 	public void setAccept(boolean accept){
 		this.accept = accept;
 	}
-
+	
+	public boolean getAccept(){
+		return accept;
+	}
+	
+	public void setDead(boolean d){
+		dead = d;
+	}
+	
+	public void setType(String s){
+		type = s;
+	}
 	/*
 	 * Generate a list of all states reachable from this state on an empty transition
 	 * Need to fix infinite loop problem
@@ -73,5 +116,9 @@ public class State{
 			}
 		}
 		return states;
+	}
+	
+	public State match(char c){
+		return transitions[c-32].get(0);
 	}
 }

@@ -7,5 +7,3 @@ $UPPERCASE  [^a-z] IN $LETTER
 %%  Token definitions will be contained in this section using regexes – examples below
 $IDENTIFIER     	$SMALLCASE ($LETTER | $DIGIT)*
 $CONSTANT            $UPPERCASE ($LETTER | $DIGIT)*
-
-

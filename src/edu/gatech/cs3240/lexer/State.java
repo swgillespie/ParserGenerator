@@ -97,9 +97,6 @@ public class State{
 		dead = d;
 	}
 	
-	public void setType(String s){
-		type = s;
-	}
 	/*
 	 * Generate a list of all states reachable from this state on an empty transition
 	 * Need to fix infinite loop problem

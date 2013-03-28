@@ -1,11 +1,12 @@
 package edu.gatech.cs3240.lexer;
 
+import java.io.Serializable;
 import java.util.*;
 /*
  * Represents a single state in a NFA
  * Specifies if it is an accept state
  */
-public class State{
+public class State implements Serializable{
 	
 	private final int EMPTY = 95;
 	private boolean accept = false;

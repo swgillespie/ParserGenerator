@@ -10,13 +10,14 @@ import edu.gatech.cs3240.lexer.DFA;
 public class TableWalkerDriver {
 
 	public static void main(String[] args) {
-		if (args.length < 3) {
+		System.out.println(Arrays.toString(args));
+		if (args.length != 2) {
 			System.out.println("Usage: java -jar TableWalker.jar dfa_filename text_filename");
 			System.exit(1);
 		}
 		try {
-			DFA dfa = DFA.readDFAFromFile(args[1]);
-			String inputFile = args[2];
+			DFA dfa = DFA.readDFAFromFile(args[0]);
+			String inputFile = args[1];
 			TableWalker t = new TableWalker(inputFile, dfa);
 			Token token = t.next();
 		

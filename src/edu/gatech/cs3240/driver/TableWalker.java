@@ -52,7 +52,7 @@ public class TableWalker {
 	
 	protected char nextValidChar(){
 		char c = nextChar();
-		while(c!= 0 && c!= '\n' && (c<' ' || c>'~')){
+		while(c!= 0 && c!= '\n' && (c<=' ' || c>'~')){
 			c = nextChar();
 		}
 		return c;

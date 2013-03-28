@@ -1,4 +1,4 @@
-<project name="ParserGenerator" default="run" basedir=".">
+<project name="ParserGenerator" default="build" basedir=".">
   <description>
    This antfile compiles the code written by Sean Gillespie, Kristina Flahrety, David Bernal, and Stephanie Yawn for the CS 3240 Project.
   </description>
@@ -17,18 +17,13 @@
   </target>
   
   <target name="build" depends="compile">
-    <jar jarfile="${lib}/ParserGenerator.jar" basedir="${bin}" manifest="MANIFEST.txt"/>
-  </target>
-
-  <target name="run" depends="build">
-    <java jar="${lib}/ParserGenerator.jar" fork="true"/>
+    <jar jarfile="${lib}/DFAGenerator.jar" basedir="${bin}" manifest="MANIFEST_DFA.txt"/>
+    <jar jarfile="${lib}/TableWalker.jar" basedir="${bin}" manifest="MANIFEST_TBL.txt"/>
   </target>
 
   <target name="clean">
     <delete dir="${bin}"/>
   </target>
-
-  <target name="clean run" depends="clean, run"/>
 
 </project>
   

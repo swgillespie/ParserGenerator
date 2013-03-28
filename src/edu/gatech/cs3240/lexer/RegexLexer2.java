@@ -80,7 +80,7 @@ public class RegexLexer2 extends Lexer{
 	public void nextSym(boolean spaces){
 		current_sym = next();
 		if(spaces == NO_SPACES){
-			while(current_sym == ' ' | current_sym == '\n'){
+		    while(Character.isWhitespace(current_sym)) {
 				current_sym = next();
 			}
 		}

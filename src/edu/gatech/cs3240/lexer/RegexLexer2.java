@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class RegexLexer2 extends Lexer{
+
+    private static final NFA EMPTY_STR_NFA = new NFA((char)95, "");
+
 	private static final boolean NO_SPACES = true;
 	private static final boolean SPACES = false;
 	private static final char RETURN = 13;
@@ -297,7 +300,7 @@ public class RegexLexer2 extends Lexer{
 		NFA tokenNFA = tokenRegexExp();
 		if(tokenNFA != null){
 			NFA concatNFA = tokenRegexTail();
-			if(concatNFA != null){
+			if(concatNFA != EMPTY_STR_NFA){
 				tokenNFA.concat(concatNFA);
 			}
 		}
@@ -305,7 +308,8 @@ public class RegexLexer2 extends Lexer{
 	}
 	
 	public NFA tokenRegexUnion() throws LexerException{
-		NFA tokenNFA = null;
+		NFA tokenNFA = EMPTY_STR_NFA;
+		tokenNFA.type = current_type;
 		if(accept('|', NO_SPACES)){
 			tokenNFA = tokenRegexStart();
 		}
@@ -313,7 +317,8 @@ public class RegexLexer2 extends Lexer{
 	}
 	
 	public NFA tokenRegexExp() throws LexerException{
-		NFA tokenNFA = null;
+		NFA tokenNFA = EMPTY_STR_NFA;
+		tokenNFA.type = current_type;		
 		CharClass charClass = new CharClass();
 		if(accept('(', NO_SPACES)){
 			inParen++;
@@ -363,13 +368,15 @@ public class RegexLexer2 extends Lexer{
 	}
 	
 	public NFA tokenRegexTail() throws LexerException{
-		NFA tokenNFA = null;
+		NFA tokenNFA = EMPTY_STR_NFA;
+		tokenNFA.type = current_type;
 		if(inParen>0 && current_sym ==')'){
 			inParen--;
 			accept(')', NO_SPACES);
 		}
 		else if(inParen<1 && !TOKEN_CHARS.contains(current_sym)&& !TOKEN_ESC_CHARS.contains(current_sym)){
 			//simply return null
+			tokenNFA = null;
 		}
 		else{
 			tokenNFA = tokenRegexHead();
@@ -405,7 +412,7 @@ public class RegexLexer2 extends Lexer{
 	public NFA combineNFAs() throws LexerException{
 		NFA combined = null;
 		if(tokenNames.isEmpty()){
-			throw new LexerException("No tokes defined");
+			throw new LexerException("No tokens defined");
 		}
 		else{
 			combined = tokenTable.get(tokenNames.get(0));

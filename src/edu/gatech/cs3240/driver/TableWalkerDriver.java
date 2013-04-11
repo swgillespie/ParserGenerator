@@ -10,7 +10,6 @@ import edu.gatech.cs3240.lexer.DFA;
 public class TableWalkerDriver {
 
 	public static void main(String[] args) {
-		System.out.println(Arrays.toString(args));
 		if (args.length != 2) {
 			System.out.println("Usage: java -jar TableWalker.jar dfa_filename text_filename");
 			System.exit(1);
@@ -21,7 +20,7 @@ public class TableWalkerDriver {
 			TableWalker t = new TableWalker(inputFile, dfa);
 			Token token = t.next();
 		
-			File f = new File(inputFile + "Output");
+			File f = new File(inputFile + "_output.txt");
 		
 			if (!f.exists()) {
 				f.createNewFile();

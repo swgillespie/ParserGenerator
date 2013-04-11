@@ -1,0 +1,9 @@
+edu.gatech.cs3240.lexer.LexerException: Invalid class character: [
+	at edu.gatech.cs3240.lexer.RegexLexer2.getClassChar(Unknown Source)
+	at edu.gatech.cs3240.lexer.RegexLexer2.classSet(Unknown Source)
+	at edu.gatech.cs3240.lexer.RegexLexer2.classSetExcluded(Unknown Source)
+	at edu.gatech.cs3240.lexer.RegexLexer2.classRegex(Unknown Source)
+	at edu.gatech.cs3240.lexer.RegexLexer2.classLine(Unknown Source)
+	at edu.gatech.cs3240.lexer.RegexLexer2.classSection(Unknown Source)
+	at edu.gatech.cs3240.lexer.RegexLexer2.parse(Unknown Source)
+	at edu.gatech.cs3240.driver.DFAGeneratorDriver.main(Unknown Source)

@@ -1,7 +1,15 @@
 package edu.gatech.cs3240.parser;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
+import java.util.Stack;
+
+import edu.gatech.cs3240.driver.WalkerException;
+import edu.gatech.cs3240.lexer.DFA;
 
 /*
  * Reads the grammar and creates to data structures of the productions found
@@ -12,6 +20,11 @@ import java.util.HashMap;
 public class ProductionFactory {
 	private ArrayList<String> variables;
 	private HashMap<String, ArrayList<Production>> productions;
+	private Scanner scanner;
+	private Stack<Character> unget_stack;
+	protected static char EOF = 0;
+	private char nextChar;
+	
 	
 	public ArrayList<String> getVariables(){
 		return variables;
@@ -20,5 +33,111 @@ public class ProductionFactory {
 	public HashMap<String, ArrayList<Production>> getProductions(){
 		return productions;
 	}
+	
+	public ProductionFactory(String fileName) throws ParserException{
+
+		File inputFile = new File(fileName);
+		if (!inputFile.exists()) {
+			throw new ParserException("File not found: " + fileName);
+		}
+		try {
+			scanner = new Scanner(new FileInputStream(inputFile));
+			scanner.useDelimiter("");
+		} catch (FileNotFoundException f) {
+			// this should never happen
+		}
+		unget_stack = new Stack<Character>();
+		
+		start();
+	}
+	
+	protected char nextChar() {
+		if (unget_stack.isEmpty()) {
+			if (scanner.hasNext()) {
+				return scanner.next().charAt(0);
+			}
+			return EOF;
+		} else {
+			return unget_stack.pop();
+		}
+	}
+	
+	
+	
+	protected char nextValidChar(){
+		char c = nextChar();
+		while(c!= 0 && c!= '\n' && (c<=' ' || c>'~')){
+			c = nextChar();
+		}
+		return c;
+	}
+	
+	protected void ungetChar(char s) {
+		unget_stack.push(s);
+	}
+	
+	private void start() throws ParserException{
+		nextChar = nextValidChar();
+		while(nextChar != EOF){
+			readProduction();
+		}
+	}
+	
+	private void readProduction() throws ParserException{
+		String variable = "";
+		String rule = "";
+
+		if(nextChar != '<'){
+			throw new ParserException("Prodcution does not start with a variable");
+		}
+		while(nextChar!='>'){
+			variable += nextChar;
+		}
+		if(variable.length()<0){
+			throw new ParserException("Empty variable");
+		}
+		
+		if(!variables.contains(variable)){
+			variables.add(variable);
+		}
+		nextChar = nextValidChar();
+
+		if(nextChar != ':'){
+			throw new ParserException("Prodcution has missing or incorrect assignment operator");
+		}
+		nextChar = nextValidChar();
+		if(nextChar != ':'){
+			throw new ParserException("Prodcution has missing or incorrect assignment operator");
+		}
+		nextChar = nextValidChar();
+		if(nextChar != '='){
+			throw new ParserException("Prodcution has missing or incorrect assignment operator");
+		}
+		
+		while(nextChar!= '\n'){
+			while(nextChar != '|' && nextChar != '\n'){
+				rule += rule;
+				nextChar = nextValidChar();
+			}
+			if(rule.length()<1){
+				throw new ParserException("Empty productions");
+			}
+			if(productions.containsKey(variable)){
+				productions.get(variable).add(new Production(variable, rule, variables.get(0)== variable));
+			}
+			else{
+				ArrayList<Production> list = new ArrayList<Production>();
+				list.add(new Production(variable, rule, variables.get(0) == variable));
+				productions.put(variable, list );
+			}
+			if(nextChar =='|'){
+				nextChar = nextValidChar();
+			}
+		}
+		
+		nextChar = nextValidChar();
+		
+	}
+	
 	
 }

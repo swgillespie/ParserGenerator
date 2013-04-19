@@ -6,30 +6,64 @@ public class FirstSet {
 	
 	//this class will create a hashtable of the first sets of all variables in the grammar
 	//the keys will be the variables in the grammar and the values will be the first sets of terminals, which
-	//will be stored as an arraylist of Charaters (note this is a wrapper class so to get char value have to do charValue()
-	//which will return the char value of the Character)
+	//will be stored as an arraylist of Strings
 	
 	//nts: have check to not add same terminal twice to set
 	
 	
-	private HashMap<String, ArrayList<Character>> firstSets; 
+	private HashMap<String, ArrayList<String>> firstSets; 
 	private HashMap<String, ArrayList<Production>> prods;
-	private ArrayList<Production> prodNames;
+	private ArrayList<String> vars;
 	
-	public FirstSet(HashMap productions, ArrayList names){
+	public FirstSet(HashMap<String, ArrayList<Production>> productions, ArrayList<String> names){
 		prods = productions;
-		prodNames = names;
-		
-		
+		vars = names;
 	}
 	
-	public void makeFirstSets(){
+	private void makeFirstSets(){
 		//makes all the first sets and stores in firstSets hashmap
 	}
 	
-	public HashMap getFirstSets(){
+	public HashMap<String, ArrayList<String>> getFirstSets(){
 		return firstSets;
 	}
+	
+	//pass in a rule and check to see if the first thing in the rule is a terminal
+	public String hasTermFirst(String rule){
+		StringBuilder tempTerm = new StringBuilder();
+		String term = null;
+		if(rule.equals("<epsilon>")){
+			term = "empty";
+		}
+		else{
+			if(rule.charAt(0) != '<' || rule.charAt(1) != '<'){
+				int i = 0;
+				while(rule.charAt(i) != 32 && i<rule.length() && rule.charAt(i) != 12){ //while not equal to space or new line
+					if(rule.charAt(i) != 32){ //don't add starting spaces to string
+						tempTerm.append(rule.charAt(i));
+					}
+					i++;
+				}
+				term = tempTerm.toString();
+			}
+		}
+		return term;
+	}
+	
+	
+	//pass rule into here, will return first terminal for each production
+	public String getTerminal(String rule){
+		String term = hasTermFirst(rule);
+		if(term != null){
+			return term;
+		}
+		else{
+			
+			rule = prods.get()
+			getTerminal(rule);
+		}
+	}
+	
 	
 	
 

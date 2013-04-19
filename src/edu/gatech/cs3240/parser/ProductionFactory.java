@@ -88,7 +88,7 @@ public class ProductionFactory {
 		String rule = "";
 
 		if(nextChar != '<'){
-			throw new ParserException("Prodcution does not start with a variable");
+			throw new ParserException("Production does not start with a variable");
 		}
 		while(nextChar!='>'){
 			variable += nextChar;
@@ -103,11 +103,11 @@ public class ProductionFactory {
 		nextChar = nextValidChar();
 
 		if(nextChar != ':'){
-			throw new ParserException("Prodcution has missing or incorrect assignment operator");
+			throw new ParserException("Production has missing or incorrect assignment operator");
 		}
 		nextChar = nextValidChar();
 		if(nextChar != ':'){
-			throw new ParserException("Prodcution has missing or incorrect assignment operator");
+			throw new ParserException("Production has missing or incorrect assignment operator");
 		}
 		nextChar = nextValidChar();
 		if(nextChar != '='){

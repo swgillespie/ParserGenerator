@@ -5,7 +5,7 @@ public class Production {
 	private String rule;
 	private boolean isStart;
 	
-	Production (String v, String r, boolean s){
+	public Production (String v, String r, boolean s){
 		variable = v;
 		rule = r;
 		isStart = s;

@@ -292,7 +292,7 @@ public class RegexLexer2 extends Lexer{
 		NFA tokenNFA = tokenRegexHead();
 		NFA unionNFA = tokenRegexUnion();
 		if(tokenNFA != null && unionNFA != null){
-			tokenNFA.concat(unionNFA);
+			tokenNFA.union(unionNFA);
 		}
 		return tokenNFA;
 	}

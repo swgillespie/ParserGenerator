@@ -17,7 +17,7 @@ public class ParseTable implements ParseTableInterface {
 		productions = factory.getProductions();
 		variables = factory.getVariables();
 		terminals = new HashSet<String>(factory.getVariables());
-		firstSet = new FirstSet(productions);
+		firstSet = new FirstSet(productions, variables);
 		followSet = new FollowSet(productions);
 		buildNonterminals();
 	}
@@ -58,6 +58,11 @@ public class ParseTable implements ParseTableInterface {
 				}
 			}
 		}
+	}
+	
+	@Override
+	public boolean isTerminal(String variable) {
+		return terminals.contains(variable);
 	}
 	
 	@Override

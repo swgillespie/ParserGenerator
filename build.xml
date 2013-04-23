@@ -19,6 +19,7 @@
   <target name="build" depends="compile">
     <jar jarfile="${lib}/DFAGenerator.jar" basedir="${bin}" manifest="MANIFEST_DFA.txt"/>
     <jar jarfile="${lib}/TableWalker.jar" basedir="${bin}" manifest="MANIFEST_TBL.txt"/>
+    <jar jarfile="${lib}/LLParser.jar" basedir="${bin}" mainfest="MANIFEST_PARSE.txt"/>
   </target>
 
   <target name="clean">

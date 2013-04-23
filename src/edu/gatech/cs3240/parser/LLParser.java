@@ -39,7 +39,7 @@ public class LLParser {
 					throw new ParserException("Syntax error: expected " + currentSym +", got End Of File");
 				return; // otherwise, accept
 			}
-			if (/* TODO currentSym is nonterminal */) {
+			if (!parseTable.isTerminal(currentSym)) {
 				Production parseEntry = parseTable.getTableEntry(currentSym, nextToken.getID());
 				parseStack.pop();
 				String[] splitProduction = parseEntry.getRule().split(" ");

@@ -24,6 +24,7 @@ public class FirstSet {
 	
 	private void makeFirstSets(){
 		for(int i=(vars.size()-1); i>=0;i--){                      							//go from bottom up through nonterm vars
+			String v = vars.get(i);
 			ArrayList<String> fs = new ArrayList<String>();
 			String var = vars.get(i); 														//current variable getting the first set of
 			ArrayList<Production> currProd = prods.get(var);								//rules of current variable
@@ -36,26 +37,26 @@ public class FirstSet {
 				rule = rule.trim();
 				String term = hasTermFirst(rule);
 				
-				if(term != null){   //add term to first set
+				if(term != null){   														//add term to first set
 					fs.add(term);
 				}
 				else{ 																		//if have to add a whole first set
 					boolean e = true;
 					while(e && rule.length()>1){
-						String temp = getVar(rule); //get the first variable in the rule
+						String temp = getVar(rule); 										//get the first variable in the rule
 						temp = temp.trim();
-						if(!temp.endsWith(">")){    //if the first variable is a terminal, add to FD then break from while loop
+						if(!temp.endsWith(">")){    										//if the first variable is a terminal, add to FD then break from while loop
 							fs.add(temp);
 							e = false;
 						}
-						else{         //if first variable is not a terminal
+						else{         														//if first variable is not a terminal
 							ArrayList<String> varFS = firstSets.get(temp);
 							
-							for(int y=0;y<varFS.size();y++){   //add all terminals except empty from var FS to curr FS
+							for(int y=0;y<varFS.size();y++){   								//add all terminals except empty from var FS to curr FS
 								if(!varFS.get(y).equals(empty))
 									fs.add(varFS.get(y));
 							}
-							if(varFS.contains(empty)){    //add empty to FS if contains empty and is only var, or if all other vars contained empty
+							if(varFS.contains(empty)){    									//add empty to FS if contains empty and is only var, or if all other vars contained empty
 								if(temp.length() == rule.length()){
 									e = false;
 									fs.add(empty);
@@ -72,6 +73,7 @@ public class FirstSet {
 					}//end while
 				}//end else
 			}//end for
+			firstSets.put(v, fs);
 		}//end main for
 	}
 	
@@ -114,13 +116,13 @@ public class FirstSet {
 		else{
 			if(rule.charAt(0) != '<'){
 				int i = 0;
-				while(rule.charAt(i) != 32 && i<rule.length() && rule.charAt(i) != 12){ //while not equal to space or new line
-					if(rule.charAt(i) != 32){ //don't add starting spaces to string
+				while(rule.charAt(i) != 32 && i<rule.length() && rule.charAt(i) != 12){ 		//while not equal to space or new line
+					if(rule.charAt(i) != 32){ 													//don't add starting spaces to string
 						tempTerm.append(rule.charAt(i));
 					}
 					i++;
 				}
-				term = tempTerm.toString(); //make term a string
+				term = tempTerm.toString(); 													//make term a string
 			}
 		}
 		return term;

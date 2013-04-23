@@ -67,7 +67,7 @@ public class TableWalker {
 		clear();
 		initalize();
 		if(currentChar == EOF){
-			return null;X
+			return null;
 		}
 		if(currentState.getAccept()){
 			acceptIds();

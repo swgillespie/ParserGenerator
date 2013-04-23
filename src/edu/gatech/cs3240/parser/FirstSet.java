@@ -4,11 +4,11 @@ import java.util.*;
 
 public class FirstSet {
 	
-	//this class will create a hashtable of the first sets of all variables in the grammar
-	//the keys will be the variables in the grammar and the values will be the first sets of terminals, which
-	//will be stored as an arraylist of Strings
+	/*this class will create a hashtable of the first sets of all variables in the grammar
+	the keys will be the variables in the grammar and the values will be the first sets of terminals, which
+	will be stored as an arraylist of Strings
 	
-	//nts: have check to not add same terminal twice to set
+	nts: have check to not add same terminal twice to set*/
 	
 	
 	private HashMap<String, ArrayList<String>> firstSets;

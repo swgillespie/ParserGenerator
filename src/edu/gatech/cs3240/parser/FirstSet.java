@@ -14,6 +14,7 @@ public class FirstSet {
 	private HashMap<String, ArrayList<String>> firstSets;
 	private HashMap<String, ArrayList<Production>> prods;
 	private ArrayList<String> vars;
+	private String empty = "<empty>";
 	
 	public FirstSet(HashMap<String, ArrayList<Production>> productions, ArrayList<String> names){
 		prods = productions;
@@ -35,57 +36,40 @@ public class FirstSet {
 				rule = rule.trim();
 				String term = hasTermFirst(rule);
 				
-				if(term != null){
+				if(term != null){   //add term to first set
 					fs.add(term);
 				}
-				else{ 																		//if we have to add a whole first set
-					boolean empty = true;
-					int ind = 0;
-					while(empty && ind<rule.length()){
-						int check = 0;
-						StringBuilder tempRule = new StringBuilder();
-						for(int x = ind; x<rule.length(); x++){									//iterate through rule to get string 
-							if(!tempRule.toString().endsWith(" ") || !tempRule.toString().endsWith(">")){ 							//check so only get the first non terminal in rule
-								if(rule.charAt(x) != 62){
-									tempRule.append(rule.charAt(x));
-									check++;
-								}
-								else if(rule.charAt(x) == 62){
-									tempRule.append(rule.charAt(x));
-									check++;
-								}
-							}
-						}
-						String temp = tempRule.toString();
-						if(temp.endsWith(" ")){
-							temp = temp.trim();
+				else{ 																		//if have to add a whole first set
+					boolean e = true;
+					while(e && rule.length()>1){
+						String temp = getVar(rule); //get the first variable in the rule
+						temp = temp.trim();
+						if(!temp.endsWith(">")){    //if the first variable is a terminal, add to FD then break from while loop
 							fs.add(temp);
-							empty = false;
+							e = false;
 						}
-						else{
-							temp = temp.trim();
+						else{         //if first variable is not a terminal
 							ArrayList<String> varFS = firstSets.get(temp);
 							
-							for(int y=0;y<varFS.size();y++){
-								if(!varFS.get(y).equals("<empty"))
+							for(int y=0;y<varFS.size();y++){   //add all terminals except empty from var FS to curr FS
+								if(!varFS.get(y).equals(empty))
 									fs.add(varFS.get(y));
 							}
-							if(varFS.contains("<empty>")){
-								if(check == (rule.length()-1)){
-									empty = false;
-									fs.add("<empty>");
+							if(varFS.contains(empty)){    //add empty to FS if contains empty and is only var, or if all other vars contained empty
+								if(temp.length() == rule.length()){
+									e = false;
+									fs.add(empty);
 								}
 								else{
-									ind = (check + 1);
+									int index = temp.length();
+									rule = rule.substring(index).trim();
 								}
 							}
 							else{
-								empty = false;
+								e = false;
 							}
 						}
 					}//end while
-					if(empty)
-						fs.add("<empty>");
 				}//end else
 			}//end for
 		}//end main for
@@ -94,6 +78,30 @@ public class FirstSet {
 	public HashMap<String, ArrayList<String>> getFirstSets(){
 		return firstSets;
 	}
+	
+	private String getVar(String rule){
+		StringBuilder temp = new StringBuilder();
+		String var;
+		if(rule.charAt(0) != '<'){
+			int i = 0;
+			while(rule.charAt(i) != 32 && i<rule.length() && rule.charAt(i) != 12){ 		//while not equal to space or new line
+				if(rule.charAt(i) != 32){ 													//don't add starting spaces to string
+					temp.append(rule.charAt(i));
+				}
+				i++;
+			}
+		}//end if
+		else{
+			int i = 0;
+			while(!temp.toString().endsWith(">")){
+				temp.append(rule.charAt(i));
+				i++;
+			}
+		}//end else
+		var = temp.toString();
+		var = var.trim();
+		return var;
+	}
 
 	
 	//pass in a rule and check to see if the first thing in the rule is a terminal
@@ -101,7 +109,7 @@ public class FirstSet {
 		StringBuilder tempTerm = new StringBuilder();
 		String term = null;
 		if(rule.equals("<epsilon>")){
-			term = "<empty>";
+			term = empty;
 		}
 		else{
 			if(rule.charAt(0) != '<'){

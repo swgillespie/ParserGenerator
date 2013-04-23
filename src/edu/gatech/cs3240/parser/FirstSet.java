@@ -18,25 +18,93 @@ public class FirstSet {
 	public FirstSet(HashMap<String, ArrayList<Production>> productions, ArrayList<String> names){
 		prods = productions;
 		vars = names;
+		makeFirstSets();
 	}
 	
 	private void makeFirstSets(){
-		//makes all the first sets and stores in firstSets hashmap
+		for(int i=(vars.size()-1); i>=0;i--){                      							//go from bottom up through nonterm vars
+			ArrayList<String> fs = new ArrayList<String>();
+			String var = vars.get(i); 														//current variable getting the first set of
+			ArrayList<Production> currProd = prods.get(var);								//rules of current variable
+			if(currProd.get(0).isStart()){
+				fs.add("$");
+			}
+			
+			for(int k=0;k<currProd.size();k++){ 											//iterate over rules
+				String rule = currProd.get(k).toString();
+				rule = rule.trim();
+				String term = hasTermFirst(rule);
+				
+				if(term != null){
+					fs.add(term);
+				}
+				else{ 																		//if we have to add a whole first set
+					boolean empty = true;
+					int ind = 0;
+					while(empty && ind<rule.length()){
+						int check = 0;
+						StringBuilder tempRule = new StringBuilder();
+						for(int x = ind; x<rule.length(); x++){									//iterate through rule to get string 
+							if(!tempRule.toString().endsWith(" ") || !tempRule.toString().endsWith(">")){ 							//check so only get the first non terminal in rule
+								if(rule.charAt(x) != 62){
+									tempRule.append(rule.charAt(x));
+									check++;
+								}
+								else if(rule.charAt(x) == 62){
+									tempRule.append(rule.charAt(x));
+									check++;
+								}
+							}
+						}
+						String temp = tempRule.toString();
+						if(temp.endsWith(" ")){
+							temp = temp.trim();
+							fs.add(temp);
+							empty = false;
+						}
+						else{
+							temp = temp.trim();
+							ArrayList<String> varFS = firstSets.get(temp);
+							
+							for(int y=0;y<varFS.size();y++){
+								if(!varFS.get(y).equals("<empty"))
+									fs.add(varFS.get(y));
+							}
+							if(varFS.contains("<empty>")){
+								if(check == (rule.length()-1)){
+									empty = false;
+									fs.add("<empty>");
+								}
+								else{
+									ind = (check + 1);
+								}
+							}
+							else{
+								empty = false;
+							}
+						}
+					}//end while
+					if(empty)
+						fs.add("<empty>");
+				}//end else
+			}//end for
+		}//end main for
 	}
 	
 	public HashMap<String, ArrayList<String>> getFirstSets(){
 		return firstSets;
 	}
+
 	
 	//pass in a rule and check to see if the first thing in the rule is a terminal
-	public String hasTermFirst(String rule){
+	private String hasTermFirst(String rule){
 		StringBuilder tempTerm = new StringBuilder();
 		String term = null;
 		if(rule.equals("<epsilon>")){
 			term = "<empty>";
 		}
 		else{
-			if(rule.charAt(0) != '<' || rule.charAt(1) != '<'){
+			if(rule.charAt(0) != '<'){
 				int i = 0;
 				while(rule.charAt(i) != 32 && i<rule.length() && rule.charAt(i) != 12){ //while not equal to space or new line
 					if(rule.charAt(i) != 32){ //don't add starting spaces to string
@@ -44,43 +112,9 @@ public class FirstSet {
 					}
 					i++;
 				}
-				term = tempTerm.toString();
+				term = tempTerm.toString(); //make term a string
 			}
 		}
 		return term;
-	}
-	
-	
-	//pass rule into here, will return first terminal for each production
-	public String getTerminal(String rule){
-		StringBuilder tempRule = new StringBuilder();
-		ArrayList<Production> rules;
-		String term = hasTermFirst(rule);
-		String newVar;
-		boolean end = false;
-		if(term != null){
-			return term;
-		}
-		else{
-			while(!end){//this will get the next var in rule
-				for(int i = 0; i<rule.length(); i++){
-					if(!tempRule.toString().endsWith(">")){ //check so only get the first non terminal in rule
-						if(rule.charAt(i) != 62){
-							tempRule.append(rule.charAt(i));
-						}
-						else if(rule.charAt(i) == 62){
-							tempRule.append(rule.charAt(i));
-						}
-					}
-				}
-			}//end while 
-			newVar = tempRule.toString();
-			newVar = newVar.trim();
-			rules = prods.get(newVar); 
-			for(int i=0; i<rules.size(); i++){
-				getTerminal(rules.get(i).getRule());
-			}
-		}
-		return "";
 	}
 }

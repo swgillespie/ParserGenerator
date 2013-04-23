@@ -11,7 +11,7 @@ public class FirstSet {
 	//nts: have check to not add same terminal twice to set
 	
 	
-	private HashMap<String, ArrayList<String>> firstSets; 
+	private HashMap<String, ArrayList<String>> firstSets;
 	private HashMap<String, ArrayList<Production>> prods;
 	private ArrayList<String> vars;
 	
@@ -33,7 +33,7 @@ public class FirstSet {
 		StringBuilder tempTerm = new StringBuilder();
 		String term = null;
 		if(rule.equals("<epsilon>")){
-			term = "empty";
+			term = "<empty>";
 		}
 		else{
 			if(rule.charAt(0) != '<' || rule.charAt(1) != '<'){
@@ -53,18 +53,34 @@ public class FirstSet {
 	
 	//pass rule into here, will return first terminal for each production
 	public String getTerminal(String rule){
+		StringBuilder tempRule = new StringBuilder();
+		ArrayList<Production> rules;
 		String term = hasTermFirst(rule);
+		String newVar;
+		boolean end = false;
 		if(term != null){
 			return term;
 		}
 		else{
-			
-			rule = prods.get()
-			getTerminal(rule);
+			while(!end){//this will get the next var in rule
+				for(int i = 0; i<rule.length(); i++){
+					if(!tempRule.toString().endsWith(">")){ //check so only get the first non terminal in rule
+						if(rule.charAt(i) != 62){
+							tempRule.append(rule.charAt(i));
+						}
+						else if(rule.charAt(i) == 62){
+							tempRule.append(rule.charAt(i));
+						}
+					}
+				}
+			}//end while 
+			newVar = tempRule.toString();
+			newVar = newVar.trim();
+			rules = prods.get(newVar); 
+			for(int i=0; i<rules.size(); i++){
+				getTerminal(rules.get(i).getRule());
+			}
 		}
+		return "";
 	}
-	
-	
-	
-
 }

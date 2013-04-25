@@ -22,6 +22,7 @@ public class FirstSet {
 		makeFirstSets();
 	}
 	
+	/*builds the hashtable of first sets where the key is the nonterminal and the value is an arraylist that is the firstset for the nonterminal*/
 	private void makeFirstSets(){
 		for(int i=(vars.size()-1); i>=0;i--){                      							//go from bottom up through nonterm vars
 			String v = vars.get(i);
@@ -38,7 +39,8 @@ public class FirstSet {
 				String term = hasTermFirst(rule);
 				
 				if(term != null){   														//add term to first set
-					fs.add(term);
+					if(!fs.contains(term))
+						fs.add(term);
 				}
 				else{ 																		//if have to add a whole first set
 					boolean e = true;
@@ -46,7 +48,8 @@ public class FirstSet {
 						String temp = getVar(rule); 										//get the first variable in the rule
 						temp = temp.trim();
 						if(!temp.endsWith(">")){    										//if the first variable is a terminal, add to FD then break from while loop
-							fs.add(temp);
+							if(!fs.contains(term))
+								fs.add(temp);
 							e = false;
 						}
 						else{         														//if first variable is not a terminal
@@ -54,12 +57,14 @@ public class FirstSet {
 							
 							for(int y=0;y<varFS.size();y++){   								//add all terminals except empty from var FS to curr FS
 								if(!varFS.get(y).equals(empty))
-									fs.add(varFS.get(y));
+									if(!fs.contains(term))
+										fs.add(varFS.get(y));
 							}
 							if(varFS.contains(empty)){    									//add empty to FS if contains empty and is only var, or if all other vars contained empty
 								if(temp.length() == rule.length()){
 									e = false;
-									fs.add(empty);
+									if(!fs.contains(term))
+										fs.add(empty);
 								}
 								else{
 									int index = temp.length();
@@ -81,6 +86,7 @@ public class FirstSet {
 		return firstSets;
 	}
 	
+	/*get the next variable from the rule*/
 	private String getVar(String rule){
 		StringBuilder temp = new StringBuilder();
 		String var;
@@ -106,7 +112,7 @@ public class FirstSet {
 	}
 
 	
-	//pass in a rule and check to see if the first thing in the rule is a terminal
+	/*pass in a rule and check to see if the first thing in the rule is a terminal*/
 	private String hasTermFirst(String rule){
 		StringBuilder tempTerm = new StringBuilder();
 		String term = null;

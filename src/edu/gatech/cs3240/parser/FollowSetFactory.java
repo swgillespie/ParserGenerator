@@ -92,6 +92,7 @@ public class FollowSetFactory
 								// If the variable following the nonTerminal is a nonTerminal
 								if (nonTerms.get(i+1) !=null)
 								{
+									System.out.println(nonTerms.get(i + 1));
 									for (String s : firstSets.get(nonTerms.get(i+1)))
 									{
 										change = followSet.addRule(nonTerms.get(i), s);

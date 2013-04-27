@@ -127,12 +127,16 @@ public class ProductionFactory {
 				throw new ParserException("Empty productions");
 			}
 			if(productions.containsKey(variable)){
+				System.out.println("rule = " + rule);
 				productions.get(variable).add(new Production(variable, rule, variables.get(0)== variable));
+				rule = "";
 			}
 			else{
 				ArrayList<Production> list = new ArrayList<Production>();
 				list.add(new Production(variable, rule, variables.get(0) == variable));
+				System.out.println("rule = " + rule);
 				productions.put(variable, list );
+				rule = "";
 			}
 			if(nextChar =='|'){
 				nextChar = nextValidChar();

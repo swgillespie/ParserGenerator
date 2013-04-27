@@ -29,12 +29,12 @@ public class FirstSet {
 			ArrayList<String> fs = new ArrayList<String>();
 			String var = vars.get(i); 														//current variable getting the first set of
 			ArrayList<Production> currProd = prods.get(var);								//rules of current variable
-			if(currProd.get(0).isStart()){
-				fs.add("$");
+			if(currProd.get(0).isStart()){	
+				fs.add("$");																//add $ to first set for starting var
 			}
 			
 			for(int k=0;k<currProd.size();k++){ 											//iterate over rules
-				String rule = currProd.get(k).toString();
+				String rule = currProd.get(k).getRule();
 				rule = rule.trim();
 				String term = hasTermFirst(rule);
 				
@@ -53,8 +53,8 @@ public class FirstSet {
 							e = false;
 						}
 						else{         														//if first variable is not a terminal
+							temp = temp.substring(1, temp.length() - 1);
 							ArrayList<String> varFS = firstSets.get(temp);
-							
 							for(int y=0;y<varFS.size();y++){   								//add all terminals except empty from var FS to curr FS
 								if(!varFS.get(y).equals(empty))
 									if(!fs.contains(term))
@@ -78,6 +78,7 @@ public class FirstSet {
 					}//end while
 				}//end else
 			}//end for
+			var = var.trim();
 			firstSets.put(var, fs);
 		}//end main for
 	}
@@ -122,13 +123,12 @@ public class FirstSet {
 		else{
 			if(rule.charAt(0) != '<'){
 				int i = 0;
-				while(i < rule.length() && rule.charAt(i) != 32 && rule.charAt(i) != 12){ 		//while not equal to space or new line
-					if(rule.charAt(i) != 32){ 													//don't add starting spaces to string
+				while(i<rule.length() && rule.charAt(i) != 32 && rule.charAt(i) != 12 && rule.charAt(i) != '<'){ 		//while not equal to space or new line
+					//if(rule.charAt(i) != 32){ 																		//don't add starting spaces to string
 						tempTerm.append(rule.charAt(i));
-					}
 					i++;
 				}
-				term = tempTerm.toString(); 													//make term a string
+				term = tempTerm.toString(); 																			//make term a string
 			}
 		}
 		return term;

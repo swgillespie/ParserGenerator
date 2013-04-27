@@ -12,13 +12,13 @@ public class ParseTable implements ParseTableInterface {
 	private Set<String> nonterminals;
 	private HashMap<String, HashMap<String, Production>> parseTable;
 
-	public ParseTable(String grammarFile) {
+	public ParseTable(String grammarFile) throws ParserException {
 		ProductionFactory factory = new ProductionFactory(grammarFile);
 		productions = factory.getProductions();
 		variables = factory.getVariables();
 		terminals = new HashSet<String>(factory.getVariables());
 		firstSet = new FirstSet(productions, variables);
-		followSet = new FollowSet(productions);
+		followSet = FollowSetFactory.makeFollowSet(productions, variables, firstSet.getFirstSets());
 		buildNonterminals();
 	}
 	

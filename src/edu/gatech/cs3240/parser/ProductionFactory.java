@@ -35,6 +35,8 @@ public class ProductionFactory {
 	}
 	
 	public ProductionFactory(String fileName) throws ParserException{
+		productions = new HashMap<String, ArrayList<Production>>();
+		variables = new ArrayList<String>();
 
 		File inputFile = new File(fileName);
 		if (!inputFile.exists()) {
@@ -90,8 +92,10 @@ public class ProductionFactory {
 		if(nextChar != '<'){
 			throw new ParserException("Production does not start with a variable");
 		}
+		nextChar = nextValidChar();
 		while(nextChar!='>'){
 			variable += nextChar;
+			nextChar = nextValidChar();
 		}
 		if(variable.length()<0){
 			throw new ParserException("Empty variable");
@@ -113,10 +117,10 @@ public class ProductionFactory {
 		if(nextChar != '='){
 			throw new ParserException("Prodcution has missing or incorrect assignment operator");
 		}
-		
+		nextChar = nextValidChar();
 		while(nextChar!= '\n'){
 			while(nextChar != '|' && nextChar != '\n'){
-				rule += rule;
+				rule += nextChar;
 				nextChar = nextValidChar();
 			}
 			if(rule.length()<1){
@@ -133,6 +137,7 @@ public class ProductionFactory {
 			if(nextChar =='|'){
 				nextChar = nextValidChar();
 			}
+			
 		}
 		
 		nextChar = nextValidChar();

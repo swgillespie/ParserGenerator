@@ -19,13 +19,13 @@ public class FirstSet {
 	public FirstSet(HashMap<String, ArrayList<Production>> productions, ArrayList<String> names){
 		prods = productions;
 		vars = names;
+		firstSets = new HashMap<String, ArrayList<String>>();
 		makeFirstSets();
 	}
 	
 	/*builds the hashtable of first sets where the key is the nonterminal and the value is an arraylist that is the firstset for the nonterminal*/
 	private void makeFirstSets(){
 		for(int i=(vars.size()-1); i>=0;i--){                      							//go from bottom up through nonterm vars
-			String v = vars.get(i);
 			ArrayList<String> fs = new ArrayList<String>();
 			String var = vars.get(i); 														//current variable getting the first set of
 			ArrayList<Production> currProd = prods.get(var);								//rules of current variable
@@ -78,7 +78,7 @@ public class FirstSet {
 					}//end while
 				}//end else
 			}//end for
-			firstSets.put(v, fs);
+			firstSets.put(var, fs);
 		}//end main for
 	}
 	
@@ -122,7 +122,7 @@ public class FirstSet {
 		else{
 			if(rule.charAt(0) != '<'){
 				int i = 0;
-				while(rule.charAt(i) != 32 && i<rule.length() && rule.charAt(i) != 12){ 		//while not equal to space or new line
+				while(i < rule.length() && rule.charAt(i) != 32 && rule.charAt(i) != 12){ 		//while not equal to space or new line
 					if(rule.charAt(i) != 32){ 													//don't add starting spaces to string
 						tempTerm.append(rule.charAt(i));
 					}

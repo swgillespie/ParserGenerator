@@ -13,19 +13,24 @@
   </target>
   
   <target name="compile" depends="init">
-    <javac srcdir="${src}" destdir="${bin}" includeantruntime="true"/>
+    <javac srcdir="${src}" destdir="${bin}" includeantruntime="true" debug="on"/>
   </target>
   
   <target name="build" depends="compile">
     <jar jarfile="${lib}/DFAGenerator.jar" basedir="${bin}" manifest="MANIFEST_DFA.txt"/>
     <jar jarfile="${lib}/TableWalker.jar" basedir="${bin}" manifest="MANIFEST_TBL.txt"/>
-    <jar jarfile="${lib}/LLParser.jar" basedir="${bin}" mainfest="MANIFEST_PARSE.txt"/>
+    <jar jarfile="${lib}/LLParser.jar" basedir="${bin}" manifest="MANIFEST_PARSE.txt"/>
   </target>
 
   <target name="clean">
     <delete dir="${bin}"/>
   </target>
 
+  <target name="run" depends="build">
+    <java jar="${lib}/LLParser.jar" fork="true">
+      <arg value="token_spec.txt grammar.txt input.txt"/>
+    </java>
+  </target>
 </project>
   
   

@@ -1,7 +1,6 @@
 package edu.gatech.cs3240.parser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class FollowSet 

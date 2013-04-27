@@ -3,7 +3,6 @@ package edu.gatech.cs3240.parser;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.regex.Pattern;
 
 public class FollowSetFactory
 {
@@ -37,6 +36,7 @@ public class FollowSetFactory
 		firstSet.put("mulop", new ArrayList<String>(Arrays.asList("*")));
 		
 		FollowSet fs = makeFollowSet(productions, new ArrayList<String>(productions.keySet()), firstSet);
+		System.out.println(fs.getFollowSets());
 	}
 	
 	public static FollowSet makeFollowSet(HashMap<String, ArrayList<Production>> productions, ArrayList<String> variables, HashMap<String, ArrayList<String>> firstSets)

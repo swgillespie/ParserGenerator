@@ -1,4 +1,4 @@
-<project name="ParserGenerator" default="build" basedir=".">
+<project name="ParserGenerator" default="run" basedir=".">
   <description>
    This antfile compiles the code written by Sean Gillespie, Kristina Flahrety, David Bernal, and Stephanie Yawn for the CS 3240 Project.
   </description>
@@ -26,9 +26,11 @@
     <delete dir="${bin}"/>
   </target>
 
-  <target name="run" depends="build">
+  <target name="run" depends="clean, build">
     <java jar="${lib}/LLParser.jar" fork="true">
-      <arg value="token_spec.txt grammar.txt input.txt"/>
+      <arg value="part2tests/token_spec.txt"/>
+      <arg value="part2tests/grammar.txt"/>
+      <arg value="part2tests/input.txt"/>
     </java>
   </target>
 </project>

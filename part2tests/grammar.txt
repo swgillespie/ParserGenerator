@@ -1,6 +1,6 @@
 <MiniRE-program> ::= BEGIN <statement-list> END
-<statement-list> ::= <statement><statement-list-tail> 
-<statement-list-tail> ::= <statement><statement-list-tail> | <epsilon>
+<statement-list> ::= <statement> <statement-list-tail> 
+<statement-list-tail> ::= <statement> <statement-list-tail> | <epsilon>
 <statement> ::= REPLACE REGEX WITH ASCII-STR IN  <file-names> SEMICOLON
 <statement> ::= RECREP REGEX WITH ASCII-STR IN  <file-names> SEMICOLON
 <statement> ::= ID EQ <statement-righthand> SEMICOLON

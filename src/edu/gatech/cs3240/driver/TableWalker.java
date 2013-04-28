@@ -24,7 +24,10 @@ public class TableWalker {
 	String lastVal;
 	ArrayList<String> lastIds = new ArrayList<String>();
 	
+	private Stack<Token> token_unget_stack;
+	
 	public TableWalker(String fileName, DFA dfa) throws WalkerException{
+		token_unget_stack = new Stack<Token>();
 		table = dfa;
 		File inputFile = new File(fileName);
 		if (!inputFile.exists()) {
@@ -62,8 +65,13 @@ public class TableWalker {
 		unget_stack.push(s);
 	}
 	
+	public void unnext(Token t) {
+		token_unget_stack.push(t);
+	}
+	
 	public Token next() throws WalkerException{
-		
+		if (!token_unget_stack.isEmpty())
+			return token_unget_stack.pop();
 		clear();
 		initalize();
 		if(currentChar == EOF){
@@ -77,7 +85,7 @@ public class TableWalker {
 			value+=currentChar;
 			removeIds();
 			if(currentState.getAccept()){
-				lastVal = value;
+				lastVal = value; 
 				acceptIds();
 			}
 			currentChar = nextValidChar();
@@ -90,8 +98,6 @@ public class TableWalker {
 			ungetChar(currentChar);
 		}
 		if(lastIds.size()!=1){
-			System.out.println("lastVal= " + lastVal + " , lastIds= " + lastIds);
-			System.out.println(lastVal + lastIds.size()+": "+ lastIds);
 			throw new WalkerException("Ambiguos REGEX specs");
 		}
 		return new Token(lastIds.get(0), lastVal);

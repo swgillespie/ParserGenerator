@@ -88,7 +88,6 @@ public class RegexLexer2 extends Lexer{
 				current_sym = next();
 			}
 		}
-		System.out.print(current_sym);
 	}
 	
 	public boolean accept(char s, boolean spaces){
@@ -340,7 +339,6 @@ public class RegexLexer2 extends Lexer{
 				tokenNFA = new NFA(classTable.get(className), current_type);
 			}
 			else{
-				System.out.println(current_sym);
 				throw new LexerException("Invalid character class: " + className);
 			}
 		}

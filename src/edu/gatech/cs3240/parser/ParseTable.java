@@ -24,7 +24,6 @@ public class ParseTable implements ParseTableInterface {
 		followSet = FollowSetFactory.makeFollowSet(productions, variables, firstSet.getFirstSets());
 		buildTerminals();
 		buildTable();
-		System.out.println("table= " + parseTable);
 	}
 	
 	public void buildTerminals() {
@@ -53,7 +52,7 @@ public class ParseTable implements ParseTableInterface {
 			parseTable.put(nonterminal, new HashMap<String, Production>());
 			for (String terminal : terminals) {
 				for (Production production : productions.get(nonterminal)) {
-					if (first.containsKey(production.getRule())) {
+					if (first.containsKey(production.getVar())) {
 						if (first.get(nonterminal).contains(terminal)) {
 							System.out.println("Making rule " + nonterminal + " -> " + terminal + " (" + production.getRule() + ")");
 							parseTable.get(nonterminal).put(terminal, production);
@@ -75,12 +74,17 @@ public class ParseTable implements ParseTableInterface {
 	
 	@Override
 	public boolean isTerminal(String variable) {
-		return terminals.contains(variable);
+		//return terminals.contains(variable);
+		System.out.println(variable);
+		return variable.charAt(0) != '<';
 	}
 	
 	@Override
 	public Production getTableEntry(String nonterminal, String terminal) {
-		System.out.println("Table entry[" + nonterminal + ", " +terminal + "]");
+		if (nonterminal.charAt(0) == '<') {
+			nonterminal = nonterminal.substring(1, nonterminal.length() - 1);
+		}
+		System.out.println("Table entry[" + nonterminal + ", " +terminal + "] = " + parseTable.get(nonterminal).get(terminal).getRule());
 		return parseTable.get(nonterminal).get(terminal);
 	}
 

@@ -29,10 +29,11 @@ public class LLParser {
 	public void parse() throws ParserException {
 		Stack<String> parseStack = new Stack<String>();
 		parseStack.push("$"); // push EOF onto stack
-		parseStack.push(parseTable.getStartRule().getVar()); // push start rule onto stack 
+		parseStack.push("<" + parseTable.getStartRule().getVar() + ">"); // push start rule onto stack 
 		while(!parseStack.isEmpty()) {
 			String currentSym = parseStack.pop();
 			Token nextToken = tokenGenerator.next();
+			System.out.println("Current sym: " + currentSym + ", next token= " + nextToken.getID() + ": " + nextToken.getValue());
 			if (nextToken == null) {
 				// the TableWalker ran out of tokens
 				if (currentSym != "$") // if EOF is not what is expected
@@ -41,11 +42,12 @@ public class LLParser {
 			}
 			if (!parseTable.isTerminal(currentSym)) {
 				Production parseEntry = parseTable.getTableEntry(currentSym, nextToken.getID());
-				parseStack.pop();
+				//parseStack.pop();
 				String[] splitProduction = parseEntry.getRule().split(" ");
 				for (int i = 0; i < splitProduction.length; i++) {
 					parseStack.push(splitProduction[(splitProduction.length - 1) - i]);
 				}
+				tokenGenerator.unnext(nextToken);
 			} else { // currentSym is terminal
 				if (!currentSym.equals(nextToken.getID())) { // if what we got is not what we expected
 					throw new ParserException("Syntax error: expected " + currentSym + ", got " + nextToken.getID());

@@ -15,11 +15,11 @@ public class LLParserDriver {
 			String fileToParse = args[2];
 			System.out.println("Building parse table...");
 			ParseTable parseTable = new ParseTable(grammar);
-			LLParser parser = new LLParser(parseTable, spec, fileToParse);
-			parser.parse();
-			System.out.println("Parse completed successfully!");
-		} catch (LexerException e) {
-			e.printStackTrace();
+//			LLParser parser = new LLParser(parseTable, spec, fileToParse);
+//			parser.parse();
+//			System.out.println("Parse completed successfully!");
+//		} catch (LexerException e) {
+//			e.printStackTrace();
 		} catch (ParserException e) {
 			e.printStackTrace();
 		}

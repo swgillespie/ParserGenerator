@@ -25,6 +25,6 @@ public class Production {
 	
 	@Override
 	public String toString() {
-		return "Production: " + variable + " -> " + rule;
+		return "Production: " + variable + " -> " + rule + " start=" + isStart;
 	}
 }

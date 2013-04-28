@@ -25,6 +25,7 @@ public class ParseTable implements ParseTableInterface {
 		buildTerminals();
 		buildTable();
 		System.out.println("table: " + parseTable);
+		System.out.println("productions: " + productions);
 	}
 	
 	public void buildTerminals() {
@@ -50,27 +51,53 @@ public class ParseTable implements ParseTableInterface {
 		parseTable = new HashMap<String, HashMap<String, Production>>();
 		parseTable = new HashMap<String, HashMap<String, Production>>();
 		for (String nonterminal : nonterminals) {
+			System.out.println("Considering nonterminal: " + nonterminal);
 			parseTable.put(nonterminal, new HashMap<String, Production>());
-			for (String terminal : terminals) {
-				for (Production production : productions.get(nonterminal)) {
-					if (first.containsKey(production.getVar())) {
-						if (first.get(nonterminal).contains(terminal)) {
-							System.out.println("Making rule " + nonterminal + " -> " + terminal + " (" + production.getRule() + ")");
-							parseTable.get(nonterminal).put(terminal, production);
-						} else if (first.get(nonterminal).contains("<empty>")) {
-							System.out.println("Making rule " + nonterminal + " -> " + terminal + " (" + production.getRule() + ")");
-							parseTable.get(nonterminal).put(terminal, production);
-						}
+			for (Production production : productions.get(nonterminal)) {
+				String[] rule_split = production.getRule().split(" ");
+				if (rule_split.length == 1) {
+					System.out.println("production: " + production + " is a lone rule");
+					for (String terminal : first.get(nonterminal)) {
+						System.out.println("Table[" + nonterminal + ", " + terminal + "] = " + production);
+						parseTable.get(nonterminal).put(terminal, production);
 					}
-					if (follow.containsKey(production.getRule())) {
-						if (follow.get(nonterminal).contains(terminal)) {
-							System.out.println("Making rule " + nonterminal + " -> " + terminal + " (" + production.getRule() + ")");
-							parseTable.get(nonterminal).put(terminal, production);
+				} else {
+					System.out.println("production: " + production + " is not a lone rule");
+					for (String i : rule_split) {
+						if (!isTerminal(i)) {
+							System.out.println("found terminal: " + i);
+							String trimmed = i.substring(1, i.length() - 1);
+							for (String terminal : first.get(trimmed)) {
+								parseTable.get(nonterminal).put(terminal, production);
+							}
+							break;
 						}
 					}
 				}
 			}
 		}
+//		for (String nonterminal : nonterminals) {
+//			parseTable.put(nonterminal, new HashMap<String, Production>());
+//			for (String terminal : terminals) {
+//				for (Production production : productions.get(nonterminal)) {
+//					if (first.containsKey(production.getVar())) {
+//						if (first.get(nonterminal).contains(terminal)) {
+//							System.out.println("Making rule " + nonterminal + " -> " + terminal + " (" + production.getRule() + ")");
+//							parseTable.get(nonterminal).put(terminal, production);
+//						} else if (first.get(nonterminal).contains("<empty>")) {
+//							System.out.println("Making rule " + nonterminal + " -> " + terminal + " (" + production.getRule() + ")");
+//							parseTable.get(nonterminal).put(terminal, production);
+//						}
+//					}
+//					if (follow.containsKey(production.getRule())) {
+//						if (follow.get(nonterminal).contains(terminal)) {
+//							System.out.println("Making rule " + nonterminal + " -> " + terminal + " (" + production.getRule() + ")");
+//							parseTable.get(nonterminal).put(terminal, production);
+//						}
+//					}
+//				}
+//			}
+//		}
 	}
 	
 	@Override

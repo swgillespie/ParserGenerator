@@ -90,6 +90,7 @@ public class TableWalker {
 			ungetChar(currentChar);
 		}
 		if(lastIds.size()!=1){
+			System.out.println("lastVal= " + lastVal + " , lastIds= " + lastIds);
 			System.out.println(lastVal + lastIds.size()+": "+ lastIds);
 			throw new WalkerException("Ambiguos REGEX specs");
 		}

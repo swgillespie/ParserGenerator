@@ -66,9 +66,9 @@ public class ProductionFactory {
 	
 	
 	
-	protected char nextValidChar(){
+	protected char nextValidChar(boolean eatSpace){
 		char c = nextChar();
-		while(c!= 0 && c!= '\n' && (c<=' ' || c>'~')){
+		while(c!= 0 && c!= '\n' && ((c< ' ') || c>'~') || (eatSpace && c == ' ')){
 			c = nextChar();
 		}
 		return c;
@@ -79,7 +79,7 @@ public class ProductionFactory {
 	}
 	
 	private void start() throws ParserException{
-		nextChar = nextValidChar();
+		nextChar = nextValidChar(true);
 		while(nextChar != EOF){
 			readProduction();
 		}
@@ -92,10 +92,10 @@ public class ProductionFactory {
 		if(nextChar != '<'){
 			throw new ParserException("Production does not start with a variable");
 		}
-		nextChar = nextValidChar();
+		nextChar = nextValidChar(true);
 		while(nextChar!='>'){
 			variable += nextChar;
-			nextChar = nextValidChar();
+			nextChar = nextValidChar(true);
 		}
 		if(variable.length()<0){
 			throw new ParserException("Empty variable");
@@ -104,24 +104,24 @@ public class ProductionFactory {
 		if(!variables.contains(variable)){
 			variables.add(variable);
 		}
-		nextChar = nextValidChar();
+		nextChar = nextValidChar(true);
 
 		if(nextChar != ':'){
 			throw new ParserException("Production has missing or incorrect assignment operator");
 		}
-		nextChar = nextValidChar();
+		nextChar = nextValidChar(true);
 		if(nextChar != ':'){
 			throw new ParserException("Production has missing or incorrect assignment operator");
 		}
-		nextChar = nextValidChar();
+		nextChar = nextValidChar(true);
 		if(nextChar != '='){
 			throw new ParserException("Prodcution has missing or incorrect assignment operator");
 		}
-		nextChar = nextValidChar();
+		nextChar = nextValidChar(true);
 		while(nextChar!= '\n'){
 			while(nextChar != '|' && nextChar != '\n'){
 				rule += nextChar;
-				nextChar = nextValidChar();
+				nextChar = nextValidChar(false);
 			}
 			if(rule.length()<1){
 				throw new ParserException("Empty productions");
@@ -139,12 +139,12 @@ public class ProductionFactory {
 				rule = "";
 			}
 			if(nextChar =='|'){
-				nextChar = nextValidChar();
+				nextChar = nextValidChar(false);
 			}
 			
 		}
 		
-		nextChar = nextValidChar();
+		nextChar = nextValidChar(false);
 		
 	}
 	

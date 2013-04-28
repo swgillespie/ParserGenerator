@@ -73,7 +73,6 @@ public class FollowSetFactory
 				{
 					ArrayList<String> nonTerms = getNonTerminals(p.getRule());
 					ArrayList<String> terms = getTerminals(p.getRule());
-					
 					for (int i = 0; i < nonTerms.size(); i++)
 					{
 						// If variable is a NonTerminal
@@ -92,7 +91,6 @@ public class FollowSetFactory
 								// If the variable following the nonTerminal is a nonTerminal
 								if (nonTerms.get(i+1) !=null)
 								{
-									System.out.println(nonTerms.get(i + 1));
 									for (String s : firstSets.get(nonTerms.get(i+1)))
 									{
 										change = followSet.addRule(nonTerms.get(i), s);
@@ -126,7 +124,7 @@ public class FollowSetFactory
 			{
 				recordingNonTerm = true;
 			}
-			else if (nextChar.equals(">"))
+			else if (nextChar.equals(">") && recordingNonTerm)
 			{
 				recordingNonTerm = false;
 				nonTerms.add(nextNonTerm);
@@ -157,7 +155,7 @@ public class FollowSetFactory
 			{
 				recordingNonTerm = true;
 			}
-			else if (nextChar.equals(">"))
+			else if (nextChar.equals(">") && recordingNonTerm)
 			{
 				recordingNonTerm = false;
 				terms.add(null);

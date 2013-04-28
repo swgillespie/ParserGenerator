@@ -17,23 +17,25 @@ public class ParseTable implements ParseTableInterface {
 		ProductionFactory factory = new ProductionFactory(grammarFile);
 		productions = factory.getProductions();
 		variables = factory.getVariables();
-		terminals = new HashSet<String>(factory.getVariables());
+		nonterminals = new HashSet<String>(factory.getVariables());
 		System.out.println("Building first set...");
 		firstSet = new FirstSet(productions, variables);
 		System.out.println("Building follow set...");
 		followSet = FollowSetFactory.makeFollowSet(productions, variables, firstSet.getFirstSets());
-		buildNonterminals();
+		buildTerminals();
+		buildTable();
+		System.out.println("table= " + parseTable);
 	}
 	
-	public void buildNonterminals() {
-		nonterminals = new HashSet<String>();
+	public void buildTerminals() {
+		terminals = new HashSet<String>();
 		for (String s : productions.keySet()) {
 			for (Production production : productions.get(s)) {
 				String[] splitProd = production.getRule().split(" ");
 				for (int i = 0; i < splitProd.length; i++) {
 					if (!terminals.contains(splitProd[i]) && !nonterminals.contains(splitProd[i])) {
 						// if it's not a terminal and it's not already in the nonterminal set
-						nonterminals.add(splitProd[i]);
+						terminals.add(splitProd[i]);
 					}
 				}
 			}
@@ -43,18 +45,26 @@ public class ParseTable implements ParseTableInterface {
 	public void buildTable() {
 		HashMap<String, ArrayList<String>> first = firstSet.getFirstSets();
 		HashMap<String, ArrayList<String>> follow = followSet.getFollowSets();
+		System.out.println("FIRST: " + first);
+		System.out.println("FOLLOW: " + follow);
+		parseTable = new HashMap<String, HashMap<String, Production>>();
+		parseTable = new HashMap<String, HashMap<String, Production>>();
 		for (String nonterminal : nonterminals) {
+			parseTable.put(nonterminal, new HashMap<String, Production>());
 			for (String terminal : terminals) {
 				for (Production production : productions.get(nonterminal)) {
 					if (first.containsKey(production.getRule())) {
 						if (first.get(nonterminal).contains(terminal)) {
+							System.out.println("Making rule " + nonterminal + " -> " + terminal + " (" + production.getRule() + ")");
 							parseTable.get(nonterminal).put(terminal, production);
 						} else if (first.get(nonterminal).contains("<empty>")) {
+							System.out.println("Making rule " + nonterminal + " -> " + terminal + " (" + production.getRule() + ")");
 							parseTable.get(nonterminal).put(terminal, production);
 						}
 					}
 					if (follow.containsKey(production.getRule())) {
 						if (follow.get(nonterminal).contains(terminal)) {
+							System.out.println("Making rule " + nonterminal + " -> " + terminal + " (" + production.getRule() + ")");
 							parseTable.get(nonterminal).put(terminal, production);
 						}
 					}
@@ -70,6 +80,7 @@ public class ParseTable implements ParseTableInterface {
 	
 	@Override
 	public Production getTableEntry(String nonterminal, String terminal) {
+		System.out.println("Table entry[" + nonterminal + ", " +terminal + "]");
 		return parseTable.get(nonterminal).get(terminal);
 	}
 

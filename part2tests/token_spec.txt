@@ -10,7 +10,7 @@ $END end
 $EQ =  
 $REPLACE replace
 $WITH with
-$IN in
+$IN IN
 $SEMICOLON ; 
 $RECREP recursivereplace  
 $GRTNOT >!  
@@ -25,5 +25,5 @@ $UNION union
 $INTERS inters
 $MAXFREQ maxfreqstring 
 $REGEX \'($NONSINGLEQUOTE|\\\')*\'
-$ID $LETTER ($LETTER|$DIGIT|_|)($LETTER|$DIGIT|_|)($LETTER|$DIGIT|_|)($LETTER|$DIGIT|_|)($LETTER|$DIGIT|_|)($LETTER|$DIGIT|_|)($LETTER|$DIGIT|_|)($LETTER|$DIGIT|_|)($LETTER|$DIGIT|_|)
+$ID _$LETTER ($LETTER|$DIGIT|_)*
 $NUMBER ($DIGIT)+

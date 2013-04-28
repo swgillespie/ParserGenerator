@@ -22,4 +22,9 @@ public class Production {
 	public boolean isStart(){
 		return isStart;
 	}
+	
+	@Override
+	public String toString() {
+		return "Production: " + variable + " -> " + rule;
+	}
 }

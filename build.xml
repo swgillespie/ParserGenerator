@@ -28,9 +28,9 @@
 
   <target name="run" depends="clean, build">
     <java jar="${lib}/LLParser.jar" fork="true">
-      <arg value="part2tests/token_spec.txt"/>
-      <arg value="part2tests/grammar.txt"/>
-      <arg value="part2tests/input.txt"/>
+      <arg value="part2tests/test1spec.txt"/>
+      <arg value="part2tests/test1grammar.txt"/>
+      <arg value="part2tests/test1input.txt"/>
     </java>
   </target>
 </project>

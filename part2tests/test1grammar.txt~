@@ -1,0 +1,5 @@
+<statement> ::= <exp-list>
+<exp-list> ::= <exp> <exp-tail>
+<exp> ::= NUMBER <op> NUMBER
+<exp-tail> ::= <exp> <exp-tail> | <epsilon> 
+<op> ::= ADDOP | SUBOP | MULTOP | DIVOP

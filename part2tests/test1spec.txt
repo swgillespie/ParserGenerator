@@ -1,0 +1,6 @@
+$DIGIT [0-9]
+%%
+$PLUS \+
+$LPAREN (
+$RPAREN )
+$A a

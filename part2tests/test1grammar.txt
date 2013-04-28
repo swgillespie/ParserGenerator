@@ -1,0 +1,3 @@
+<A> ::= <S>
+<S> ::= <F> | LPAREN S PLUS F RPAREN
+<F> ::= A

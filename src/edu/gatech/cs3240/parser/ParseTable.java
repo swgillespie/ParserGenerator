@@ -24,6 +24,7 @@ public class ParseTable implements ParseTableInterface {
 		followSet = FollowSetFactory.makeFollowSet(productions, variables, firstSet.getFirstSets());
 		buildTerminals();
 		buildTable();
+		System.out.println("table: " + parseTable);
 	}
 	
 	public void buildTerminals() {

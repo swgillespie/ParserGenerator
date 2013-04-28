@@ -30,7 +30,7 @@ public class FirstSet {
 			String var = vars.get(i); 														//current variable getting the first set of
 			ArrayList<Production> currProd = prods.get(var);								//rules of current variable
 			if(currProd.get(0).isStart()){	
-				fs.add("$");																//add $ to first set for starting var
+				//fs.add("$");	not used in first sets- sean								//add $ to first set for starting var
 			}
 			
 			for(int k=0;k<currProd.size();k++){ 											//iterate over rules
